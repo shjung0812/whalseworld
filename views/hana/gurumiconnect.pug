@@ -1,0 +1,308 @@
+html
+	head
+		script(src='/socket.io/socket.io.js')
+		script(src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.3/xlsx.full.min.js")
+		script(src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js")
+		style.
+			.dw {
+				display:inline-block;
+				margin:0 5%;
+			}
+			.madaechk {
+				float:left;
+			}
+			.drawerdiv {
+				width:10%;
+				float:left;
+		
+			}
+			#madaeinfo {
+				background-color:green;
+			}
+
+	body
+
+		p gurumiconnect
+		div(id='controldiv')
+			button(onclick='madaesuminfo();') 마대정보
+
+		div(id='madaelist')
+		div(id='madaeinfo')
+		script.
+			var socket = io('/whalse');
+
+
+
+			function exportExcel(){ 
+			    // step 1. workbook 생성
+			    var wb = XLSX.utils.book_new();
+
+			    // step 2. 시트 만들기 
+			    var newWorksheet = excelHandler.getWorksheet();
+			    
+			    // step 3. workbook에 새로만든 워크시트에 이름을 주고 붙인다.  
+			    XLSX.utils.book_append_sheet(wb, newWorksheet, excelHandler.getSheetName());
+
+			    // step 4. 엑셀 파일 만들기 
+			    var wbout = XLSX.write(wb, {bookType:'xlsx',  type: 'binary'});
+
+			    // step 5. 엑셀 파일 내보내기 
+			    saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), excelHandler.getExcelFileName());
+			}
+			var excelHandler = {
+					getExcelFileName : function(){
+					    return 'aoa-test.xlsx';
+					},
+					getSheetName : function(){
+						return 'AOA Test Sheet';
+					},
+					getExcelData : function(){
+						return [['이름' , '나이', '부서'],['도사원' , '21', '인사팀'],['김부장' , '27', '비서실'],['엄전무' , '45', '기획실']];
+					},
+					getWorksheet : function(){
+						return XLSX.utils.aoa_to_sheet(this.getExcelData());
+					}
+			}
+			function s2ab(s) { 
+			    var buf = new ArrayBuffer(s.length); //convert s to arrayBuffer
+			    var view = new Uint8Array(buf);  //create uint8array as viewer
+			    for (var i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF; //convert to octet
+			    return buf;    
+			}
+		
+
+
+			function removeallele(parentid){
+				var parent=document.getElementById(parentid);
+				while(parent.firstChild){
+					parent.firstChild.remove();
+				}
+			}
+
+
+			var madaedata=!{JSON.stringify(a)};
+			var indmadae=[];
+			for(var ia=0; ia<madaedata.length; ia++){
+				var chk=0;
+				for(var ib=0; ib<indmadae.length; ib++){
+					if(indmadae[ib]==madaedata[ia].madaename){
+						chk=1;
+						break;
+					}
+				}
+				if(chk==0){
+					indmadae.push(madaedata[ia].madaename)
+				}
+			}
+
+
+
+			function madaesuminfo(){
+				var chlist=document.getElementsByClassName('madaechk');
+				var selectmadae=[];
+				for(var ia=0;ia<chlist.length; ia++){
+					if(chlist[ia].checked){
+						selectmadae.push(chlist[ia].getAttribute('data-madaename'))
+						
+					}
+				}
+				socket.emit('customosmadaeinfo',{selectmadae:selectmadae})
+			}
+
+
+			var categoryinfo=[
+				{
+				categoryname:"TO",
+				fullname:"TOP (2.9$)",
+				quantity:0
+			},{
+				categoryname:"OT",
+				fullname:"OUTER (5.9$)",
+				quantity:0
+
+			},{
+				categoryname:"OP",
+				fullname:"DRESS (4.8$)",
+				quantity:0
+			},{
+				categoryname:"BO",
+				fullname:"BOTTOM (3.9$)",
+				quantity:0
+
+			},{
+				categoryname:"SH",
+				fullname:"SHOES (4.9$)",
+				quantity:0
+
+			},{
+				categoryname:"SO",
+				fullname:"SOCKS (0.4$)",
+				quantity:0
+
+			},{
+				categoryname:"HA",
+				fullname:"HAT (2.2$)",
+				quantity:0
+
+			},{
+				categoryname:"AC",
+				fullname:"HAIR ACC (2.6$)",
+				quantity:0
+
+			}
+			]
+				
+
+			socket.on('customosmadaeinfoafter',function(a){
+				removeallele('madaeinfo');
+				var eb=document.getElementById('exceldownbutton')
+				if(eb){
+					eb.remove();
+				}
+				var ndata=0;
+				var sum=0;
+
+
+				for(var ia=0; ia<categoryinfo.length; ia++){
+					categoryinfo[ia].quantity=0;
+				}
+
+
+				for(var ia=0; ia<a.madaeinfo.length; ia++){
+					var chk=0;
+					for(var ib=0; ib<categoryinfo.length; ib++){
+						if(categoryinfo[ib].categoryname==a.madaeinfo[ia].category){
+							categoryinfo[ib].quantity+=1;
+							sum+=1;
+							chk=1;
+							break;	
+						}
+					}
+					if(chk!=1){
+						ndata+=1;
+					}
+				}
+
+
+				var exceldata=[];
+
+				var categorynamelist=[]
+				var categoryfullnamelist=[]
+				var categorycountlist=[]
+
+				var madaeinfodiv=document.getElementById('madaeinfo');
+				for(var ia=0; ia<categoryinfo.length; ia++){
+					var drawerdiv=document.createElement('div');
+					drawerdiv.className='drawerdiv';
+
+					var categorynamediv=document.createElement('div');
+					categorynamediv.className='categorynamediv';
+					categorynamediv.innerHTML=categoryinfo[ia].categoryname;
+					drawerdiv.appendChild(categorynamediv);
+		
+
+					var categoryfullname=document.createElement('div');
+					categoryfullname.className='categoryfullname';
+					categoryfullname.innerHTML=categoryinfo[ia].fullname;
+					drawerdiv.appendChild(categoryfullname);
+
+					var categoryquantity=document.createElement('div');
+					categoryquantity.className='categoryquantity';
+					categoryquantity.innerHTML=categoryinfo[ia].quantity;
+					drawerdiv.appendChild(categoryquantity);
+
+					madaeinfodiv.appendChild(drawerdiv);
+					
+
+					//excel data
+					categorynamelist.push(categoryinfo[ia].categoryname);
+					categoryfullnamelist.push(categoryinfo[ia].fullname);
+					categorycountlist.push(categoryinfo[ia].quantity)
+				}
+				exceldata.push(categorynamelist)
+				exceldata.push(categoryfullnamelist)
+				exceldata.push(categorycountlist)
+
+				var drawerdiv=document.createElement('div');
+				drawerdiv.className='drawerdiv';
+
+				var nonamevalue=document.createElement('div');
+				nonamevalue.innerHTML='nonamevalue : '+ndata;
+				drawerdiv.appendChild(nonamevalue);
+
+				var sumdiv=document.createElement('div');
+				sumdiv.innerHTML='total';				
+				drawerdiv.appendChild(sumdiv);
+	
+				var sumvalue=document.createElement('div');
+				sumvalue.innerHTML=sum;
+				drawerdiv.appendChild(sumvalue);
+				madaeinfodiv.appendChild(drawerdiv);
+
+
+				categorynamelist.push('nonamevalue : '+ndata);
+				categoryfullnamelist.push('total');
+				categorycountlist.push(sum)
+
+			
+
+				excelHandler.getExcelData=function(){
+					return exceldata;
+				}
+
+
+				var exceldown=document.createElement('button');
+				exceldown.innerHTML='excelDownload';
+				exceldown.id='exceldownbutton';
+				exceldown.onclick=function(){
+					return function(){
+						exportExcel();
+					}
+				}();
+				document.getElementById('controldiv').appendChild(exceldown);
+
+			});
+			var madaelist=document.getElementById('madaelist');
+			for(var ib=0; ib<indmadae.length; ib++){
+				var sdiv=document.createElement('div');
+				var sdivcheck=document.createElement('input');	
+				sdivcheck.setAttribute('data-madaename',indmadae[ib]);
+				sdivcheck.type='checkbox';
+				sdivcheck.className='madaechk';
+				sdivcheck.id='madaechk'+ib;
+				sdiv.appendChild(sdivcheck);
+
+				var madaediv=document.createElement('div');
+
+				madaediv.innerHTML=indmadae[ib];
+				for(var ia=0; ia<madaedata.length; ia++){
+					/*
+					if(indmadae[ib]==madaedata[ia].madaename){
+						var fdiv=document.createElement('div');
+					
+						var dw0=document.createElement('div');
+						dw0.innerHTML=madaedata[ia].madaename;
+						dw0.className='dw';
+						fdiv.appendChild(dw0);
+
+						var dw1=document.createElement('div');
+						dw1.innerHTML=madaedata[ia].parcel_code;
+						dw1.className='dw';
+						fdiv.appendChild(dw1);
+
+						var dw2=document.createElement('div');
+						dw2.className='dw';
+						var dw2img=document.createElement('img');
+						dw2img.src=madaedata[ia].img_url;
+						dw2.appendChild(dw2img);
+						fdiv.appendChild(dw2);
+						//dw1.innerHTML=madaedata[ia].
+
+
+						madaediv.appendChild(fdiv);
+					}*/
+				}
+				sdiv.appendChild(madaediv);
+				madaelist.appendChild(sdiv);
+			}
+

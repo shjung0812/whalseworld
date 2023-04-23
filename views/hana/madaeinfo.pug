@@ -1,0 +1,62 @@
+html
+	head
+		style.
+			.dw {
+				display:inline-block;
+				margin:0 5%;
+			}
+	body
+		p madaeinfo
+		div(id='madaelist')
+		script.
+		
+			var madaedata=!{JSON.stringify(a)};
+			var indmadae=[];
+			for(var ia=0; ia<madaedata.length; ia++){
+				var chk=0;
+				for(var ib=0; ib<indmadae.length; ib++){
+					if(indmadae[ib]==madaedata[ia].madaename){
+						chk=1;
+						break;
+					}
+				}
+				if(chk==0){
+					indmadae.push(madaedata[ia].madaename)
+				}
+			}
+
+			console.log(madaedata);
+
+			var madaelist=document.getElementById('madaelist');
+			for(var ib=0; ib<indmadae.length; ib++){
+				var madaediv=document.createElement('div');
+				for(var ia=0; ia<madaedata.length; ia++){
+					if(indmadae[ib]==madaedata[ia].madaename){
+						var fdiv=document.createElement('div');
+						
+						var dw0=document.createElement('div');
+						dw0.innerHTML=madaedata[ia].madaename;
+						dw0.className='dw';
+						fdiv.appendChild(dw0);
+
+						var dw1=document.createElement('div');
+						dw1.innerHTML=madaedata[ia].parcel_code;
+						dw1.className='dw';
+						fdiv.appendChild(dw1);
+
+						var dw2=document.createElement('div');
+						dw2.className='dw';
+						var dw2img=document.createElement('img');
+						dw2img.src=madaedata[ia].img_url;
+						dw2.appendChild(dw2img);
+						fdiv.appendChild(dw2);
+						//dw1.innerHTML=madaedata[ia].
+
+
+						madaediv.appendChild(fdiv);
+					}
+				}
+				madaelist.appendChild(madaediv);
+			}
+			console.log(indmadae)
+	

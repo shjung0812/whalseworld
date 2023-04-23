@@ -1,0 +1,2097 @@
+html
+	head 
+		title processing list
+		script(src='/socket.io/socket.io.js')
+		link(rel="stylesheet",href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css")
+		//script(src='/whalse/whalselib/infoinput.js')
+		script(src="https://code.jquery.com/jquery-1.12.4.js")
+		script(src="https://code.jquery.com/ui/1.12.1/jquery-ui.js")
+
+		style.
+			#uploadbackdiv {
+				width:100%;
+				height:100%;
+				z-index:2;
+				position:absolute;
+				top:0;
+				left:0;
+				background-color:rgba(100,100,100,.5);
+			}
+
+
+			#errpicdiv {
+				z-index:3;
+			}
+			#uploadpanel {
+				width:60%;
+				height:80%;
+				margin:5% 20%;
+				background-color:yellow;
+				
+				
+			}
+
+			#scandiv {
+				width:70%;	
+				height:100%;
+				float:left;
+				background-color:#aaaaaa;
+			}
+	
+
+
+			#container1 {
+				width:50%;	
+				height:100%;
+				float:left;
+				background-color:#cccccc;
+			}
+			#container2 {
+				width:30%;
+				height:100%;
+				float:left;
+				background-color:#cccccc;
+			}
+			#drawer1 {
+				width:50%;
+				float:left;
+			}
+			#drawer2 {
+				width:50%;
+				float:left;
+			}
+
+			#parcelcontent {
+				width:100%;
+				overflow:auto;
+			}
+			.parcelset {
+				width:24%;
+				display:inline-block;
+				overflow:auto;
+				margin:1% 0;
+				border: 1px solid black;
+			}
+			#scanparceldiv {
+				width:100%;
+				height:20%;
+				background-color:#bbbbbb;
+			}
+			#scandisplaydiv {
+				width:100%;
+				height:20%;
+				background-color:#cccccc;
+
+			}
+			#scanoptiondiv {
+				width:100%;
+				height:20%;
+				background-color:#dddddd;
+
+			}
+			#scanparcela3 {
+				background-color:#dddddd;
+			}
+	body
+		div(id='invoicenumdiv')
+			div(id='filediv')
+				div
+					//button(onclick='parclecodeUpload()') uploal_Parcel_code
+				//form(action='/whalse_uploadinvoice' enctype='multipart/form-data' method='post' target='hidden-iframe')
+					//input(type='file' name='whalse_data' id='invoicefile')
+
+				iframe(name='hidden-iframe' style='display:none')
+				//div(id='filecontent')
+			div(id='parcelcontent')
+			div
+				audio(id='sound1' src='/sound/audio_1.wav', autoplay=false)
+				audio(id='sound2' src='/sound/audio_2.wav', autoplay=false)
+				audio(id='sound3' src='/sound/audio_3.wav', autoplay=false)
+
+		script.
+			var socket = io('/whalse',{
+				transports:['websocket'],
+				upgrade:false
+			});
+
+
+
+			var selectpc=[];
+			var waitingpc=[];
+
+
+			/*
+			function uploadZusPic(bodyname,pinfo){
+				removeallele(bodyname);
+				var uploaddiv=document.createElement('div');
+				uploaddiv.id='erroruploaddiv';
+				uploaddiv.style.width=100+'%';
+				uploaddiv.style.height=100+'%';
+				uploaddiv.style.backgroundColor='#eeeeee';
+
+				var bodydiv=document.getElementById(bodyname);
+
+				var formdiv=document.createElement('div');
+				var formel=document.createElement('form');
+				var form=document.createElement('input');
+				formel.setAttribute('enctype','multipart/form-data');
+				formel.setAttribute('method','post');
+				var formfile=document.createElement('input');
+				formfile.id='formfile';
+				formfile.onchange=function(){loadImage(event);};
+				formfile.setAttribute('type','file');
+				formfile.setAttribute('multiple','multiple');
+
+				var sendbutton=document.createElement('button');
+				sendbutton.innerHTML='send';
+				sendbutton.onclick=function(i){return function(){errsendFile(i)}}(pinfo);
+
+
+				var retrievebutton=document.createElement('button');
+				retrievebutton.innerHTML='BACK'
+				retrievebutton.onclick=function(){return function(){
+					errpiccon=0;
+					document.getElementById('errbodydiv').remove();
+
+				}}();
+
+
+				var photodiv=document.createElement('div');
+				photodiv.style.width=100+'%';
+				photodiv.style.height=100*0.617+'%';
+
+
+				bodydiv.appendChild(photodiv);
+
+				formel.appendChild(formfile);
+				formdiv.appendChild(formel);
+				formdiv.appendChild(sendbutton);
+				formdiv.appendChild(retrievebutton);
+
+				//uploaddiv.appendChild(formdiv);	
+				bodydiv.appendChild(formdiv);
+
+				function loadImage(e){
+					for(var ia=0; ia<e.target.files.length; ia++){
+						var photoimg=document.createElement('img');
+						photoimg.style.width=100+'%';
+						photoimg.style.height=100+'%';
+						photoimg.src='';
+						photoimg.src=URL.createObjectURL(e.target.files[ia]);
+						
+						photodiv.appendChild(photoimg);
+
+					}
+				}
+
+
+			}
+
+
+
+
+
+			function afterErrorUpload(pid,fname){
+
+				//callWritingInDiv('bodydiv');
+				document.getElementById('errbodydiv').remove();
+				piccon=0;
+				function wsend(){
+					socket.emit('errcontent',{pclistnumid:pid[1],pc:pid[0],content:fname,mode:'errorpic'});
+				}
+
+				setTimeout(wsend,2000);
+
+				
+			}
+
+
+
+			function errsendFile(pid){
+				var formel=document.getElementById('formfile');
+				var formData=new FormData();
+				var formfile=formel.files[0];
+				var ext=formfile.name.split('.')[formfile.name.split('.').length-1];
+				//formData.append('Numid'+pid[0]+'scode'+pid[1],formfile);
+				var fname='pclistnumid'+pid[1]+'pc'+pid[0]+'errorphoto'+'_'+Date.now();
+				formData.append(fname,formfile);
+				formData.append('pc',pid[0]);
+				formData.append('pclistnumid',pid[1]);
+				formData.append('fname',fname);
+				var xhr = new XMLHttpRequest();
+				xhr.open('post','/whalseerrorphotoupload',true);
+				xhr.send(formData);
+
+				xhr.addEventListener('load',afterErrorUpload(pid,fname+'.'+ext));
+			}
+
+
+
+
+
+			function erruploadFile(bodyname,pinfo){
+				removeallele(bodyname);
+				var uploaddiv=document.createElement('div');
+				uploaddiv.id='erroruploaddiv';
+				uploaddiv.style.width=100+'%';
+				uploaddiv.style.height=100+'%';
+				uploaddiv.style.backgroundColor='#eeeeee';
+
+				var bodydiv=document.getElementById(bodyname);
+
+				var formdiv=document.createElement('div');
+				var formel=document.createElement('form');
+				var form=document.createElement('input');
+				formel.setAttribute('enctype','multipart/form-data');
+				formel.setAttribute('method','post');
+				var formfile=document.createElement('input');
+				formfile.id='formfile';
+				formfile.onchange=function(){loadImage(event);};
+				formfile.setAttribute('type','file');
+
+				var sendbutton=document.createElement('button');
+				sendbutton.innerHTML='send';
+				sendbutton.onclick=function(i){return function(){errsendFile(i)}}(pinfo);
+
+
+				var retrievebutton=document.createElement('button');
+				retrievebutton.innerHTML='BACK'
+				retrievebutton.onclick=function(){return function(){
+					errpiccon=0;
+					document.getElementById('errbodydiv').remove();
+
+				}}();
+
+
+				var photodiv=document.createElement('div');
+				photodiv.style.width=100+'%';
+				photodiv.style.height=100*0.617+'%';
+				var photoimg=document.createElement('img');
+				photoimg.style.width=100+'%';
+				photoimg.style.height=100+'%';
+				
+				photodiv.appendChild(photoimg);
+				uploaddiv.appendChild(photodiv);
+
+				formel.appendChild(formfile);
+				formdiv.appendChild(formel);
+				formdiv.appendChild(sendbutton);
+				formdiv.appendChild(retrievebutton);
+
+				uploaddiv.appendChild(formdiv);	
+				bodydiv.appendChild(uploaddiv);
+
+				function loadImage(e){
+					photoimg.src='';
+					photoimg.src=URL.createObjectURL(e.target.files[e.target.files.length-1]);
+				}
+
+
+			}*/
+
+
+
+			var errpiccon=0;
+			function errPicContainer(divwidth,divposx,divposy,pc,pclistnumid){
+				if(errpiccon==0){
+					var bodydiv=document.createElement('div');
+					bodydiv.id='errbodydiv';
+					
+					const gratio=1;
+					//const gratio=0.618;
+					const bodywidth=divwidth;
+					bodydiv.style.width=bodywidth + '%';
+					bodydiv.style.height=bodywidth+'%';
+					bodydiv.style.backgroundColor='red';
+					bodydiv.style.position='fixed';
+					bodydiv.style.top=divposx+'%';
+					bodydiv.style.left=divposy+'%';
+
+					document.getElementsByTagName('body')[0].appendChild(bodydiv);
+
+
+
+					errpiccon=1;
+					//preViewprb('','bodydiv');
+					erruploadFile('errbodydiv',[pc,pclistnumid]);	
+
+				}else if(errpiccon==1){
+					errpiccon=0;
+					document.getElementById('errbodydiv').remove();
+				}
+
+					
+			}
+
+
+
+
+
+			function findCurrentScode(cname){
+				var fdiv=document.getElementsByClassName(cname);
+				var chk=0;
+				for(var ia=0; ia<fdiv.length; ia++){
+					if(fdiv[ia].firstChild.checked==true){
+						chk=1;
+						break;
+					}
+				}
+				if(chk==1){
+					return fdiv[ia].firstChild.value;
+				}else{
+					return -1;
+				}
+			}
+
+
+
+
+			var branch='';
+
+			function exitParcelcodeUpload(){
+				document.getElementById('uploadbackdiv').remove();				
+			}
+
+			var officebranchlist=['DT','MODT','KK','MOKK','MG','SI','MOSI','CP','ON','MOON','DWINC','MOOMG','OFFMG']
+			//var officebranchlist=['seoul','tokyo','london','newyork','online']
+			function parclecodeUpload(){
+
+				selectpc=[];
+				waitingtpc=[];
+
+
+
+				/*
+				var regpclist=[];
+				var chka;
+				for(var ia=0; ia<pcl.length; ia++){
+				var temp=pcl[ia].parcelcodelist.split(',');
+				for(var ic=0; ic<temp.length; ic++){
+					chka=0;
+					for(var ib=0; ib<regpclist.length; ib++){
+						if(regpclist[ib]==temp[ic]){
+							chka=1;
+						}
+					}
+					if(chka==0){	
+						regpclist.push(temp[ic])
+					}
+				}
+				}*/
+				
+
+
+
+				/*
+				var fdiv=document.createElement('div');
+				fdiv.id='uploadbackdiv';
+				fdiv.onclick=function(){
+					fdiv.remove();
+				}
+
+				document.getElementsByTagName('body')[0].appendChild(fdiv);*/
+
+
+
+				var sdiv=document.getElementById('uploadpanel');
+				if(sdiv){
+					sdiv.remove();
+				}
+
+				var sdiv=document.createElement('div');
+				sdiv.id='uploadpanel';
+				document.getElementsByTagName('body')[0].appendChild(sdiv);
+
+				/*
+				sdiv.addEventListener('click',(e)=>{
+					e.stopPropagation();
+				});*/
+
+
+				var container1=document.createElement('div');
+				container1.id='container1';
+				var container2=document.createElement('div');
+				container2.id='container2';
+
+
+				sdiv.appendChild(container2);
+				//sdiv.appendChild(container1);
+
+
+
+
+				/*
+
+				var formdiv=document.createElement('form');
+				formdiv.setAttribute('action','/whalse_uploadinvoice');
+				formdiv.setAttribute('enctype','multipart/form-data');
+				formdiv.setAttribute('method','post');
+				formdiv.setAttribute('target','hidden-iframe');
+
+				var inputel=document.createElement('input');
+				inputel.setAttribute('type','file');
+				inputel.setAttribute('name','whalse_data');
+				inputel.id='invoicefile';
+				formdiv.appendChild(inputel);
+
+				container1.appendChild(formdiv);
+				
+
+				
+				var filecontent=document.createElement('div');
+				filecontent.id='filecontent';
+				container1.appendChild(filecontent);*/
+
+
+
+
+				function containerCreate(){
+
+
+					removeallele('container2')
+				
+					var containercheck=document.getElementById('scandiv');
+					if(containercheck){
+						containercheck.remove();
+					}	
+
+					//data check
+					var today= new Date();
+					if(today.getMonth() < 9 ){
+						var gmonth='0'+(today.getMonth()+1)
+					}else{
+						var gmonth=today.getMonth()+1;
+					}
+
+					if(today.getDate() < 10){
+						var gday='0'+today.getDate()
+					}else{
+						var gday=today.getDate()
+					}
+					
+					var date=today.getFullYear()+'-'+gmonth+'-'+gday;
+
+
+					var roundnum=0;
+					for(var ia=0; ia<calldata.a.length; ia++){
+						//console.log(a.a[ia].createdate.split(' ')[0]);
+						if(calldata.a[ia].arrivaldate==date){
+							if(roundnum<calldata.a[ia].roundnum){
+								roundnum=calldata.a[ia].roundnum;
+							}
+						}
+					}
+
+					roundnum++;
+
+					var pc=document.getElementById('parcelcontent');
+					var stoday=date;
+					var sroundnum=roundnum;
+
+					var todaydiv=document.createElement('div');
+					todaydiv.id='todaydiv';
+					todaydiv.innerHTML=stoday;
+		
+					var roundnumdiv=document.createElement('div');
+					roundnumdiv.id='roundnumdiv';
+					roundnumdiv.innerHTML=sroundnum;
+
+					container2.appendChild(todaydiv);
+					container2.appendChild(roundnumdiv);
+
+					var branchdiv=document.createElement('div');
+					branchdiv.id='branchlistdiv';
+					for(var ik=0; ik < officebranchlist.length; ik++){
+						var officestatusdiv=document.createElement('div');
+						officestatusdiv.className='officestatussubdiv';
+						var officestatusa=document.createElement('a');
+						officestatusa.innerHTML=officebranchlist[ik];
+						var officestatus=document.createElement('input');
+						
+						
+						officestatus.value=officebranchlist[ik];
+						officestatusdiv.appendChild(officestatus);
+						officestatusdiv.appendChild(officestatusa);
+
+
+						officestatus.className='officestatus'+'input';
+						officestatus.type='radio';
+						officestatus.name='officestatusc'
+						officestatus.onclick=function(s){
+							return function(){
+							
+
+								removeallele('nextdiv');	
+								var nextbutton=document.createElement('button');
+								nextbutton.innerHTML='Next';
+								nextbutton.onclick=function(t){	
+									return function(){
+										openScandiv(t);
+									}
+								}(s);
+								branch=s;
+								nextdiv.appendChild(nextbutton);
+
+
+								
+							}
+						}(officebranchlist[ik]);
+
+						branchdiv.appendChild(officestatusdiv);
+					}
+
+					container2.appendChild(branchdiv);
+
+					var nextdiv=document.createElement('div');
+					nextdiv.id='nextdiv';
+					container2.appendChild(nextdiv);
+
+				}
+
+				containerCreate();
+
+				function openScandiv(branch){
+
+
+					console.log(branch);
+					var branchdiv=document.createElement('div');
+					branchdiv.innerHTML=branch;
+					branchdiv.id='branchdiv';
+					document.getElementById('container2').appendChild(branchdiv);
+
+					document.getElementById('nextdiv').remove();
+
+					removeallele('branchlistdiv');
+					
+
+
+					var scandiv=document.createElement('div');
+					scandiv.id='scandiv';
+					sdiv.appendChild(scandiv);
+					
+
+
+					var scanparceldiv=document.createElement('div');
+					scanparceldiv.id='scanparceldiv';
+					var scanparcela1=document.createElement('a');
+					scanparcela1.innerHTML='스캔송장입력'
+					var scanparcela2=document.createElement('input');
+					scanparcela2.value='';
+					scanparcela2.id='itemtext'
+					var scanparcela3=document.createElement('a');
+					scanparcela3.id='scanparcela3'
+					scanparcela3.innerHTML='n';
+					scanparceldiv.appendChild(scanparcela1);
+					scanparceldiv.appendChild(scanparcela2);
+					scanparceldiv.appendChild(scanparcela3);
+					var tempbutton=document.createElement('button');
+					tempbutton.innerHTML='tempButton';
+					tempbutton.onclick=function(i){
+						return function(){
+							checkParcelcode(i);
+						}
+					}(branch);
+					scanparceldiv.appendChild(tempbutton);
+
+
+					var scandisplaydiv=document.createElement('div');
+					scandisplaydiv.id='scandisplaydiv';
+
+
+					var scanoptiondiv=document.createElement('div');
+					scanoptiondiv.id='scanoptiondiv';
+					var branchpointbutton=document.createElement('button');	
+					branchpointbutton.innerHTML='출고지점추가'
+					branchpointbutton.onclick=function(){
+						return function(){
+							containerCreate();
+						}
+					}();
+					scanoptiondiv.appendChild(branchpointbutton);
+
+					var scancomplete=document.createElement('button');
+					scancomplete.innerHTML='스캔완료'
+					scancomplete.onclick=function(){	
+						return function(){
+							scanComplete();
+						}
+					}();
+					scanoptiondiv.appendChild(scancomplete);
+
+					scandiv.appendChild(scanparceldiv);
+					scandiv.appendChild(scandisplaydiv);
+					scandiv.appendChild(scanoptiondiv);
+
+
+
+			
+				}
+
+
+				/*
+				var madediv=document.createElement('div');
+				var maxmadenum=5;
+				for(var id=1; id <= maxmadenum; id++){
+					var madestatusdiv=document.createElement('div');
+					madestatusdiv.className='madestatussubdiv';
+					var madestatusa=document.createElement('a');
+					madestatusa.innerHTML=id;
+					var madestatus=document.createElement('input');
+					madestatus.value=id;
+					madestatusdiv.appendChild(madestatus);
+					madestatusdiv.appendChild(madestatusa);
+
+
+					madestatus.className='madestatus'+'input';
+					madestatus.type='radio';
+					madestatus.name='madestatusc'
+
+					madediv.appendChild(madestatusdiv);
+				}
+				container2.appendChild(madediv);
+				*/
+
+
+
+				/*
+				inputel.addEventListener('input',(e)=>{
+				//invoicefile.addEventListener('input',(e)=>{  why it works?
+				var f=e.target.files[0];
+				var reader = new FileReader();
+				reader.onload=function(k){
+					removeallele('filecontent')
+
+					var idatael=document.getElementById('parcelcontent').getAttribute('data-idata');
+					var idata = JSON.parse(idatael);
+
+					
+					var fdata={pcdata:'', officebranch:findCurrentScode('officestatussubdiv'), madenum:findCurrentScode('madestatussubdiv'),arrivaldate:stoday, roundnum:sroundnum};
+
+					var availpclist=[];
+
+
+					var vdata=k.target.result.split(',');
+					var contentdiv=document.getElementById('filecontent');
+					for(var ia=0; ia<vdata.length; ia++){
+
+
+
+						var exchk=0;
+						for(var ic=0; ic<regpclist.length; ic++){
+							if(regpclist[ic]==vdata[ia]){
+								exchk=1;
+							}
+						}
+
+
+
+						var fdiv=document.createElement('div');
+						fdiv.innerHTML=vdata[ia];
+
+						var chk=0;
+						for(var ib=0; ib<idata.length; ib++){
+							if(idata[ib].parcel_code==vdata[ia]){
+								chk=1;
+								break;
+							}
+						}
+						if(exchk==0){
+							if(chk==0){
+								fdiv.style.color='red';
+								availpclist.push(vdata[ia])
+							}else{
+								fdiv.style.color='green';
+								availpclist.push(vdata[ia])
+							}
+						}else{
+							fdiv.style.color='white';
+						}
+
+
+
+						contentdiv.appendChild(fdiv);
+					}
+
+					for(var id=0; id<availpclist.length; id++){
+						if(availpclist.length-1!=id){
+							fdata.pcdata+=availpclist[id]+',';
+						}else{
+							fdata.pcdata+=availpclist[id];
+						}
+					}
+					var sendbutton=document.createElement('button');
+					sendbutton.innerHTML='send';
+					sendbutton.onclick=function(i){		
+						return function(){
+							console.log(i);
+							sendDatatoserver(i)
+						}
+					}(fdata);
+					contentdiv.appendChild(sendbutton);
+					invoicefile.value='';
+				};
+				reader.readAsText(f,'euc-kr');
+				});
+
+				*/
+
+
+
+			}
+
+
+			function scanComplete(){
+				
+				var gettoday=document.getElementById('todaydiv').innerHTML;
+				var getroundnum=document.getElementById('roundnumdiv').innerHTML;
+
+
+
+			
+				var indSelectpc=selectInd(selectpc,1);
+
+
+
+				/*
+				var pcobj=[];
+				for(var ib=0; ib<indSelectpc.length; ib++){
+					pcobj.push({branchoffice:indSelectpc[ib],pclist:[]})
+					for(var ia=0; ia<selectpc.length; ia++){
+						if(indSelectpc[ib]==selectpc[ia][1] && selectpc[ia][2]==1){
+							pcobj[pcobj.length-1].pclist.push([selectpc[ia][0],ia+1]);
+						}
+					}
+				}
+				*/
+
+				var pcobj=[];
+				for(var ia=0; ia<selectpc.length; ia++){
+					if(selectpc[ia][2]==1){
+						selectpc[ia].push(ia+1)
+						pcobj.push(selectpc[ia])
+					}
+				}
+
+
+
+				/*
+
+				for(var ia=0; ia<pcobj.length; ia++){
+					var pcl='';
+					for(var ib=0;ib<pcobj[ia].pclist.length; ib++){
+						if(pcobj[ia].pclist.length-1 == ib){
+							pcl+=pcobj[ia].pclist[ib];
+						}else{
+							pcl+=pcobj[ia].pclist[ib]+',';
+						}
+					}
+					pcobj[ia].pcl=pcl;
+				}*/
+
+
+
+
+				var errobj=[];//parcelcode, branchoffice, errorcode,file
+				for(var ia=0; ia<selectpc.length; ia++){
+					if(selectpc[ia][2]==0){
+						errobj.push([selectpc[ia][0],selectpc[ia][1],ia+1,selectpc[ia][3]]);
+					}
+				}
+
+
+
+
+
+				//xhr.addEventListener('load',afterErrorUpload(pid,fname+'.'+ext));
+
+				if(pcobj.length !=0){
+					socket.emit('outgoingdata',{pcdata:pcobj,option:'insertpc',roundnum:getroundnum,arrivaldate:gettoday});
+
+					if(errobj.length!=0){
+					
+						var formData=new FormData();
+
+						for(var ia=0; ia<errobj.length; ia++){
+							var formfile=errobj[ia][3];
+							var fname=ia+'_errorwaitingphoto'+'_'+Date.now();
+							var ext=formfile.name.split('.')[formfile.name.split('.').length-1];
+							errobj[ia].push(fname+'.'+ext)	
+							errobj[ia].push(gettoday)	
+							formData.append(fname,formfile);
+					
+						}
+
+
+						formData.append(getroundnum,JSON.stringify(errobj));
+						//formData.append('fname',fname);
+						var xhr = new XMLHttpRequest();
+						xhr.open('post','/whalseparcelwaitingupload',true);
+						xhr.send(formData);
+					}
+
+				}else{
+					alert('no parcelcode');
+				}
+				//socket.emit('outgoingdata',{pcdata:pcobj,errdata:errobj,option:'insertpc',roundnum:getroundnum,arrivaldate:gettoday});
+
+
+			}
+
+
+			function selectInd(t,tnum){
+
+				var ind=[];
+				for(var ia=0; ia<t.length; ia++){
+					var chk=0;
+					for(var ib=0; ib<ind.length; ib++){
+						if(ind[ib]==t[ia][tnum]){
+							chk=1;
+							break;
+						}
+					}
+					if(chk==0){
+						ind.push(t[ia][tnum]);
+					}
+				}
+
+				return ind;
+
+			}
+
+
+			function sendDatatoserver(data){
+				console.log(data);
+
+				//check process
+				var fdiv=document.getElementsByClassName('officestatussubdiv');
+				var chk=0;
+				for(var ia=0; ia<fdiv.length; ia++){
+					if(fdiv[ia].firstChild.checked==true){
+						chk=1;
+						break;
+					}
+				}
+				if(chk==1){
+					var officebranchnum=fdiv[ia].firstChild.value;
+				}else{
+					var officebranchnum=-1
+				}
+
+
+				/*
+
+				var fdiv=document.getElementsByClassName('madestatussubdiv');
+				var chk=0;
+				for(var ia=0; ia<fdiv.length; ia++){
+					if(fdiv[ia].firstChild.checked==true){
+						chk=1;
+						break;
+					}
+				}
+				if(chk==1){
+					var madenum=fdiv[ia].firstChild.value;
+				}else{
+					var madenum=-1
+				}*/
+
+
+
+
+				if(officebranchnum == -1){
+					alert('check officebranch');
+				}else{
+					if(data.pcdata!=''){
+						socket.emit('outgoingdata',{pcdata:data.pcdata,officebranch:officebranchnum,madenum:0,roundnum:data.roundnum,arrivaldate:data.arrivaldate,option:'insert'});
+					}else{
+						alert('no registered data');
+					}
+					exitParcelcodeUpload()
+				}
+				
+			}
+
+
+
+			var calldata;
+			socket.on('outgoingdataafter',function(a){
+
+				calldata=a;
+				var parcelcontent=document.getElementById('parcelcontent');
+
+				if(a.option=='calld'){
+					removeallele('parcelcontent')
+
+
+
+					for(var ia=0; ia<a.a.length; ia++){
+						
+						var fdiv=document.createElement('div');
+						fdiv.className='parcelset';
+
+						var fdivadiv=document.createElement('div');
+						fdivadiv.id='drawer1'
+						var pclist=a.a[ia].parcelcodelist.split(',');
+
+						var unifitest=[];
+						var pcstatus=[];
+						for(var ic=0; ic<pclist.length; ic++){
+							pcstatus[ic]={pc:pclist[ic],pcstatus:'', pcmsg:'',pclistnumid:a.a[ia].numid}
+							var cdiv=document.createElement('div');
+							cdiv.className='pclistdiv';
+							var fdiva=document.createElement('a');
+							fdiva.innerHTML='('+(ic+1)+') '+pclist[ic];
+
+
+
+
+							/*
+							//tag occupied list test
+							var chkopy=0;
+							for(var ij=0; ij<a.d.length; ij++){
+								if(a.d[ij].	
+							}*/
+
+							//parcel_code exist check
+							var chk=0;
+							for(var id=0; id<a.e.length; id++){
+								if(a.e[id].parcel_code==pclist[ic]){
+									chk=1;
+									break;
+								}
+							}
+							if(chk==1){
+								fdiva.style.color='green';
+							}else{
+								fdiva.style.color='red';
+							}
+
+							cdiv.appendChild(fdiva);
+
+							//branch office unification test
+							var count=0;
+							for(var ie=0; ie<a.e.length; ie++){
+								if(a.e[ie].parcel_code==pclist[ic]){
+									var wo=a.e[ie].w_orderday.split('_')[0];
+									if(count==0){
+										var unichk=wo;
+									}
+									if(unichk!=wo){
+										unichk=0;
+										break;
+									}
+									count++;
+								}
+								
+							}
+							console.log(unichk);
+							var unifia=document.createElement('a');
+							cdiv.appendChild(unifia);
+
+							var bmatchinga=document.createElement('a');
+							if(unichk!=0 && chk==1){
+								//unifia.innerHTML='eu';
+								unifia.style.color='green';
+							
+
+									
+								if(a.a[ia].branchoffice=='onsdfsdfe'){//dummy will be soon removed
+									if(Number.isInteger(unichk)){
+										unifia.innerHTML='euA';
+										pcstatus[ic].pcstatus='euA';
+										//bmatchinga.innerHTML='(oo)';
+									}else{
+										unifia.innerHTML='eum';
+										pcstatus[ic].pcstatus='eum';
+										//bmatchinga.innerHTML='(xx)';
+									}
+
+								}else{
+									if(a.a[ia].branchoffice==unichk){
+									
+										unifia.innerHTML='euA';
+										pcstatus[ic].pcstatus='euA';
+										//bmatchinga.innerHTML='oo';
+										//bmatchinga.innerHTML=unichk[0]+unichk[1]
+									}else{
+										unifia.innerHTML='eum';
+										pcstatus[ic].pcstatus='eum';
+										//bmatchinga.innerHTML='xx';
+									}
+								}
+							
+							}else if(unichk!=0 && chk==0){
+								unifia.innerHTML='xui';
+								pcstatus[ic].pcstatus='xui';
+								pcstatus[ic].pcmsg='No Data';
+								unifia.style.color='red';
+
+							}else if(unichk==0 && chk==1){
+								unifia.innerHTML='esi';
+								pcstatus[ic].pcstatus='esi';
+								pcstatus[ic].pcmsg='Branch Office Error';
+								unifia.style.color='red';
+
+							}else if(unichk==0 && chk==0){
+								unifia.innerHTML='xsi';
+								pcstatus[ic].pcstatus='xsi';
+								pcstatus[ic].pcmsg='No Data';
+								unifia.style.color='red';
+
+							}else{
+								unifia.innerHTML='ttt';
+								pcstatus[ic].pcstatus='ttt';
+								unifia.style.color='red';
+								pcstatus[ic].pcmsg='system error';
+								//bmatchinga.innerHTML='xx';
+							}
+							
+							//cdiv.appendChild(bmatchinga);
+		
+
+							fdivadiv.appendChild(cdiv);
+
+						}
+						fdiv.appendChild(fdivadiv);
+
+
+						var container2=document.createElement('div');
+						container2.id='drawer2';
+
+						var farrivaladiv=document.createElement('div');
+						var farrivala=document.createElement('a');
+						if(a.a[ia].arrivaldate==null){
+							farrivala.innerHTML='arrivaldate empty';
+						}else{
+							farrivala.innerHTML=a.a[ia].arrivaldate;
+						}
+						farrivaladiv.appendChild(farrivala);
+						container2.appendChild(farrivaladiv);
+
+
+						var froundnumdiv=document.createElement('div');
+						var froundnum=document.createElement('a');
+						if(a.a[ia].roundnum==null){
+							froundnum.innerHTML='roundnum empty';
+						}else{
+							froundnum.innerHTML=a.a[ia].roundnum;
+						}
+						froundnumdiv.appendChild(froundnum);
+						container2.appendChild(froundnumdiv);
+					
+
+						var fbranchofficediv=document.createElement('div');
+						var fbranchoffice=document.createElement('a');
+						if(a.a[ia].branchoffice==null){
+							fbranchoffice.innerHTML='branchoffice empty';
+						}else{
+							fbranchoffice.innerHTML=a.a[ia].branchoffice;
+						}
+						fbranchofficediv.appendChild(fbranchoffice);
+						container2.appendChild(fbranchofficediv);
+
+
+						var fmadenumdiv=document.createElement('div');
+						var fmadenum=document.createElement('a');
+						if(a.a[ia].madenum==null){
+							fmadenum.innerHTML='madenum empty';
+						}else{
+							fmadenum.innerHTML=a.a[ia].madenum;
+						}
+						fmadenumdiv.appendChild(fmadenum);
+						container2.appendChild(fmadenumdiv);
+
+						var outgoingdatediv=document.createElement('div');
+						var outgoingdate=document.createElement('input');
+						outgoingdate.id='datecon'+a.a[ia].numid;
+						outgoingdate.className='datecon';
+						//outgoingdate.className='datecon hasDatepicker';
+						outgoingdate.setAttribute('data-numid',a.a[ia].numid);
+
+						if(a.a[ia].outgoingdate==null){
+							outgoingdate.value='Insert Date';	
+						}else{
+							outgoingdate.value=a.a[ia].outgoingdate;	
+						}
+						outgoingdate.setAttribute('data-numid',a.a[ia].numid);
+
+						outgoingdatediv.appendChild(outgoingdate);
+						container2.appendChild(outgoingdatediv);
+			
+
+
+
+						var jpcstatus=JSON.stringify(pcstatus)
+						var gobuttondiv=document.createElement('div');	
+						var gobutton=document.createElement('button');
+						gobuttondiv.appendChild(gobutton);
+						gobutton.innerHTML='Output';
+						gobutton.onclick=function(s){
+							return function(){
+								window.location='./selectoutput?selectpclist='+s+'&fieldstring='+a.orderlist[0].orderset;
+							}
+						}(jpcstatus);
+						container2.appendChild(gobuttondiv);
+			
+
+						fdiv.appendChild(container2);
+						parcelcontent.appendChild(fdiv);
+
+
+						$(function (){
+							$(".datecon").datepicker({
+								//format:"yymmdd",
+								//autoclose:true,
+								//immediateUpdates:true,
+								onSelect:function(datetext,inst){
+									var inp=document.getElementById(inst.id);
+									var nid=inp.getAttribute('data-numid');
+						
+									console.log(datetext, inst,nid);
+									socket.emit('outgoingdata',{option:'update',outgoingdate:datetext,numid:nid});
+								}
+							});
+						});
+						$.datepicker.setDefaults({
+							dateFormat:'yy-mm-dd'
+						});
+
+					}
+				}else if(a.option=='call'){
+					parclecodeUpload();
+				}else if(a.option=='update'){
+				}
+
+			
+
+				/*	
+				//data check
+				var today= new Date();
+				if(today.getMonth() < 9 ){
+					var gmonth='0'+(today.getMonth()+1)
+				}else{
+					var gmonth=today.getMonth()+1;
+				}
+
+				if(today.getDate() < 10){
+					var gday='0'+today.getDate()
+				}else{
+					var gday=today.getDate()
+				}
+				
+				var date=today.getFullYear()+'-'+gmonth+'-'+gday;
+				console.log(date);	
+
+
+				var roundnum=1;
+				for(var ia=0; ia<a.a.length; ia++){
+					//console.log(a.a[ia].createdate.split(' ')[0]);
+					if(a.a[ia].createdate.split(' ')[0]==date){
+						roundnum++;
+					}
+				}
+
+				parcelcontent.setAttribute('data-date',date);
+				parcelcontent.setAttribute('data-roundnum',roundnum);
+				parcelcontent.setAttribute('data-idata',JSON.stringify(a.e));*/
+
+			});
+
+			socket.emit('outgoingdata',{option:'call'})
+			function removeallele(parentid){
+				var parent=document.getElementById(parentid);
+				while(parent.firstChild){
+					parent.firstChild.remove();
+				}
+			}
+
+
+
+
+			var errwaiting=0;
+			function errwaitingPicContainer(divwidth,divposx,divposy){
+				if(errwaiting==0){
+					var bodydiv=document.createElement('div');
+					bodydiv.id='errbodydiv';
+					
+					const gratio=1;
+					//const gratio=0.618;
+					const bodywidth=divwidth;
+					bodydiv.style.width=bodywidth + '%';
+					bodydiv.style.height=bodywidth+'%';
+					bodydiv.style.backgroundColor='red';
+					bodydiv.style.position='fixed';
+					bodydiv.style.zIndex=3;
+					bodydiv.style.top=divposx+'%';
+					bodydiv.style.left=divposy+'%';
+
+					document.getElementsByTagName('body')[0].appendChild(bodydiv);
+
+
+
+					errwaiting=1;
+					var fel=document.getElementById('itemtext');
+					var todaydiv=document.getElementById('todaydiv').innerHTML;
+					var roundnumdiv=document.getElementById('roundnumdiv').innerHTML;
+					erruploadFile('errbodydiv',[fel.value,branch,todaydiv,roundnumdiv]);	
+
+				}else if(errwaiting==1){
+					errwaiting=0;
+					document.getElementById('errbodydiv').remove();
+				}
+
+					
+			}
+
+
+			function erruploadFile(bodyname,pinfo){
+				removeallele(bodyname);
+				var uploaddiv=document.createElement('div');
+				uploaddiv.id='erroruploaddiv';
+				uploaddiv.style.width=100+'%';
+				uploaddiv.style.height=100+'%';
+				uploaddiv.style.backgroundColor='#eeeeee';
+
+				var bodydiv=document.getElementById(bodyname);
+
+				var formdiv=document.createElement('div');
+				var formel=document.createElement('form');
+				var form=document.createElement('input');
+				formel.setAttribute('enctype','multipart/form-data');
+				formel.setAttribute('method','post');
+				var formfile=document.createElement('input');
+				formfile.id='formfile';
+				formfile.onchange=function(){loadImage(event);};
+				formfile.setAttribute('type','file');
+
+				var sendbutton=document.createElement('button');
+				sendbutton.innerHTML='send';
+				sendbutton.onclick=function(i){return function(){errsendFile(i)}}(pinfo);
+
+
+				var retrievebutton=document.createElement('button');
+				retrievebutton.innerHTML='BACK'
+				retrievebutton.onclick=function(){return function(){
+					errwaiting=0;
+					document.getElementById('errbodydiv').remove();
+
+				}}();
+
+
+				var photodiv=document.createElement('div');
+				photodiv.style.width=100+'%';
+				photodiv.style.height=100*0.617+'%';
+				var photoimg=document.createElement('img');
+				photoimg.style.width=100+'%';
+				photoimg.style.height=100+'%';
+				
+				photodiv.appendChild(photoimg);
+				uploaddiv.appendChild(photodiv);
+
+				formel.appendChild(formfile);
+				formdiv.appendChild(formel);
+				formdiv.appendChild(sendbutton);
+				formdiv.appendChild(retrievebutton);
+
+				uploaddiv.appendChild(formdiv);	
+				bodydiv.appendChild(uploaddiv);
+
+				function loadImage(e){
+					photoimg.src='';
+					photoimg.src=URL.createObjectURL(e.target.files[e.target.files.length-1]);
+				}
+
+
+			}
+
+
+
+			function afterErrorUpload(pid,fname){
+
+				//callWritingInDiv('bodydiv');
+				document.getElementById('errbodydiv').remove();
+				piccon=0;
+				function wsend(){
+					socket.emit('errcontent',{pc:pid,content:fname,mode:'errorwaitingpic'});
+				}
+
+				setTimeout(wsend,2000);
+
+				
+			}
+
+
+
+			function errsendFile(pid){
+				var formel=document.getElementById('formfile');
+
+
+
+				var chk1=checkItemExist(selectpc,pid[0]);
+				if(chk1==0){//no exist
+					selectpc.push([pid[0],branch,0,formel.files[0]]);
+					document.getElementById('errbodydiv').remove();
+					errwaiting=0;
+
+
+				}else{
+					//alert('No Exist')
+				}
+
+
+
+
+				/*
+				var formData=new FormData();
+				var formfile=formel.files[0];
+				var ext=formfile.name.split('.')[formfile.name.split('.').length-1];
+				//formData.append('Numid'+pid[0]+'scode'+pid[1],formfile);
+				var fname='errorwaitingphoto'+'_'+Date.now();
+				//var fname='pclistnumid'+pid[1]+'pc'+pid[0]+'errorphoto'+'_'+Date.now();
+				formData.append(fname,formfile);
+				formData.append('pc',pid[0]);
+				formData.append('fname',fname);
+				var xhr = new XMLHttpRequest();
+				xhr.open('post','/whalseparcelwaitingupload',true);
+				xhr.send(formData);
+
+				xhr.addEventListener('load',afterErrorUpload(pid,fname+'.'+ext));*/
+				/*
+				xhr.addEventListener('readystatechange',function(e){
+					if(this.readyState===4){
+						afterUpload(pid,fname+'.'+ext);
+					}
+				});*/
+			}
+
+
+
+
+
+
+
+
+
+
+			function checkParcelcode(md){
+
+
+				var branchtext=document.getElementById('branchdiv').innerHTML;
+				console.log(branchtext);
+				var fel=document.getElementById('itemtext');
+
+
+
+							//parcel_code exist in data check
+							var chk=0;
+							for(var id=0; id<calldata.e.length; id++){
+								if(calldata.e[id].parcel_code==fel.value){
+									chk=1;
+									break;
+								}
+							}
+				
+							//branch office unification test
+							var count=0;
+							for(var ie=0; ie<calldata.e.length; ie++){
+								if(calldata.e[ie].parcel_code==fel.value){
+									var wo=calldata.e[ie].w_orderday.split('_')[0];
+									if(count==0){
+										var unichk=wo;
+									}
+									if(unichk!=wo){
+										unichk=0;
+										break;
+									}
+									count++;
+								}
+								
+							}
+
+
+
+							//parcelcode duplicate
+							var chk1=0;
+							for(var ia=0; ia<calldata.a.length; ia++){
+								var app=calldata.a[ia].parcelcodelist.split(',');
+								for(var ib=0;ib<app.length; ib++){
+									if(app[ib]==fel.value){
+										chk1=1;
+										break;
+									}
+								}
+								if(chk1==1){
+									break;
+								}
+							}
+						
+
+
+							if(unichk!=0 && chk==1 && chk1==0){
+							
+
+									
+								if(branch=='onsdfsdfe'){//dummy will be soon removed
+									if(Number.isInteger(unichk)){
+										//unifia.innerHTML='euA';
+										//pcstatus[ic].pcstatus='euA';
+									}else{
+										//unifia.innerHTML='eum';
+										//pcstatus[ic].pcstatus='eum';
+										//bmatchinga.innerHTML='(xx)';
+									}
+
+								}else{
+									if(branch==unichk){
+										var chk1=checkItemExist(selectpc,fel.value);
+										if(chk1==0){//no exist
+											selectpc.push([fel.value,branch,1,0]);
+
+										}else{
+											//selectpc=removeItemFromExist(selectpc,fel.value);
+										}
+
+										document.getElementById('scanparcela3').innerHTML='정상';
+										document.getElementById('scanparcela3').style.color='blue';
+
+
+
+										var scandisplaydiv=document.getElementById('scandisplaydiv');
+										removeallele('scandisplaydiv');
+										var num=0;
+										for(var ia=0; ia<selectpc.length; ia++){
+											if(selectpc[ia][1]==branchtext){
+												if(selectpc[ia][2]==1){
+													num+=1;
+													var fdiv=document.createElement('div');
+
+													var pcind=document.createElement('a');
+													var pcstatus=document.createElement('a');
+													pcind.innerHTML=num+':'+selectpc[ia][0];
+													pcstatus.innerHTML='    정상';
+													fdiv.appendChild(pcind)
+													fdiv.appendChild(pcstatus)
+													scandisplaydiv.appendChild(fdiv);
+												}else if(selectpc[ia][2]==0){
+													num+=1;
+													var fdiv=document.createElement('div');
+
+													var pcind=document.createElement('a');
+													var pcstatus=document.createElement('a');
+													pcind.innerHTML=num+':'+selectpc[ia][0];
+													pcstatus.innerHTML='    대기';
+													pcind.style.color='red';
+													pcstatus.style.color='green';
+
+													fdiv.appendChild(pcind)
+													fdiv.appendChild(pcstatus)
+													scandisplaydiv.appendChild(fdiv);
+
+												}else if(selectpc[ia][2]==2){	
+
+
+													if(ia==0 || ia==selectpc.length-1){
+														num+=1;
+														//branch error indication
+														var fdiv=document.createElement('div');
+
+														var pcind=document.createElement('a');
+														var pcstatus=document.createElement('a');
+														pcind.innerHTML=num+':'+selectpc[ia][0];
+														pcstatus.innerHTML='    오류';
+														pcind.style.color='red';
+														pcstatus.style.color='green';
+
+														fdiv.appendChild(pcind)
+														fdiv.appendChild(pcstatus)
+														scandisplaydiv.appendChild(fdiv);
+													}else if(selectpc[ia-1][2]==2 && selectpc[ia-1][0]!=selectpc[ia][0]){
+														num+=1;
+														//branch error indication
+														var fdiv=document.createElement('div');
+
+														var pcind=document.createElement('a');
+														var pcstatus=document.createElement('a');
+														pcind.innerHTML=num+':'+selectpc[ia][0];
+														pcstatus.innerHTML='    오류';
+														pcind.style.color='red';
+														pcstatus.style.color='green';
+
+														fdiv.appendChild(pcind)
+														fdiv.appendChild(pcstatus)
+														scandisplaydiv.appendChild(fdiv);
+
+													}else if(selectpc[ia-1][2]==2 && selectpc[ia-1][0]==selectpc[ia][0]){
+		
+														//error indication
+														var fdiv=document.createElement('div');
+
+														var pcind=document.createElement('a');
+														var pcstatus=document.createElement('a');
+														pcind.innerHTML=num+':'+selectpc[ia][0];
+														pcstatus.innerHTML='    대기';
+														pcind.style.color='red';
+														pcstatus.style.color='green';
+
+														fdiv.appendChild(pcind)
+														fdiv.appendChild(pcstatus)
+														scandisplaydiv.appendChild(fdiv);
+													}else{	
+														num+=1;
+														//branch error indication
+														var fdiv=document.createElement('div');
+
+														var pcind=document.createElement('a');
+														var pcstatus=document.createElement('a');
+														pcind.innerHTML=num+':'+selectpc[ia][0];
+														pcstatus.innerHTML='    오류';
+														pcind.style.color='red';
+														pcstatus.style.color='green';
+
+														fdiv.appendChild(pcind)
+														fdiv.appendChild(pcstatus)
+														scandisplaydiv.appendChild(fdiv);
+
+													}
+
+												}else{
+													alert('deadly harmful error')
+
+												}
+											}
+									
+										}
+
+										/*
+										for(var ia=0; ia<waitingpc.length; ia++){
+											if(waitingpc[ia][1]==branchtext){
+												var fdiv=document.createElement('div');
+
+												var pcind=document.createElement('a');
+												var pcstatus=document.createElement('a');
+												pcind.innerHTML=waitingpc[ia][0];
+												pcstatus.innerHTML='    대기';
+												pcind.style.color='red';
+												pcstatus.style.color='green';
+
+												fdiv.appendChild(pcind)
+												fdiv.appendChild(pcstatus)
+												scandisplaydiv.appendChild(fdiv);
+											}
+									
+										}*/
+
+
+
+									
+									}else{
+										console.log('unification is not matched', branch, unichk);
+
+										document.getElementById('scanparcela3').innerHTML='출고지점오류';
+										document.getElementById('scanparcela3').style.color='red';
+
+										var ediv=document.getElementById('errpicdiv');
+										if(ediv){
+											ediv.remove();
+										}
+
+
+										var scandisplaydiv=document.getElementById('scandisplaydiv');
+										removeallele('scandisplaydiv');
+										var num=0;
+										for(var ia=0; ia<selectpc.length; ia++){
+											if(selectpc[ia][1]==branchtext){
+												if(selectpc[ia][2]==1){
+													num+=1;
+													var fdiv=document.createElement('div');
+
+													var pcind=document.createElement('a');
+													var pcstatus=document.createElement('a');
+													pcind.innerHTML=num+':'+selectpc[ia][0];
+													pcstatus.innerHTML='    정상';
+													fdiv.appendChild(pcind)
+													fdiv.appendChild(pcstatus)
+													scandisplaydiv.appendChild(fdiv);
+												}else if(selectpc[ia][2]==0){
+													num+=1;
+													var fdiv=document.createElement('div');
+
+													var pcind=document.createElement('a');
+													var pcstatus=document.createElement('a');
+													pcind.innerHTML=num+':'+selectpc[ia][0];
+													pcstatus.innerHTML='    대기';
+													pcind.style.color='red';
+													pcstatus.style.color='green';
+
+													fdiv.appendChild(pcind)
+													fdiv.appendChild(pcstatus)
+													scandisplaydiv.appendChild(fdiv);
+
+												}else if(selectpc[ia][2]==2){	
+
+
+													if(ia==0 || ia==selectpc.length-1){
+														num+=1;
+														//branch error indication
+														var fdiv=document.createElement('div');
+
+														var pcind=document.createElement('a');
+														var pcstatus=document.createElement('a');
+														pcind.innerHTML=num+':'+selectpc[ia][0];
+														pcstatus.innerHTML='    오류';
+														pcind.style.color='red';
+														pcstatus.style.color='green';
+
+														fdiv.appendChild(pcind)
+														fdiv.appendChild(pcstatus)
+														scandisplaydiv.appendChild(fdiv);
+													}else if(selectpc[ia-1][2]==2 && selectpc[ia-1][0]!=selectpc[ia][0]){
+														num+=1;
+														//branch error indication
+														var fdiv=document.createElement('div');
+
+														var pcind=document.createElement('a');
+														var pcstatus=document.createElement('a');
+														pcind.innerHTML=num+':'+selectpc[ia][0];
+														pcstatus.innerHTML='    오류';
+														pcind.style.color='red';
+														pcstatus.style.color='green';
+
+														fdiv.appendChild(pcind)
+														fdiv.appendChild(pcstatus)
+														scandisplaydiv.appendChild(fdiv);
+
+													}else if(selectpc[ia-1][2]==2 && selectpc[ia-1][0]==selectpc[ia][0]){
+		
+														//error indication
+														var fdiv=document.createElement('div');
+
+														var pcind=document.createElement('a');
+														var pcstatus=document.createElement('a');
+														pcind.innerHTML=num+':'+selectpc[ia][0];
+														pcstatus.innerHTML='    대기';
+														pcind.style.color='red';
+														pcstatus.style.color='green';
+
+														fdiv.appendChild(pcind)
+														fdiv.appendChild(pcstatus)
+														scandisplaydiv.appendChild(fdiv);
+													}else{	
+														num+=1;
+														//branch error indication
+														var fdiv=document.createElement('div');
+
+														var pcind=document.createElement('a');
+														var pcstatus=document.createElement('a');
+														pcind.innerHTML=num+':'+selectpc[ia][0];
+														pcstatus.innerHTML='    오류';
+														pcind.style.color='red';
+														pcstatus.style.color='green';
+
+														fdiv.appendChild(pcind)
+														fdiv.appendChild(pcstatus)
+														scandisplaydiv.appendChild(fdiv);
+
+													}
+
+												}else{
+													alert('deadly harmful error')
+
+												}
+											}
+									
+										}
+
+
+
+										/*
+
+										var scandisplaydiv=document.getElementById('scandisplaydiv');
+										removeallele('scandisplaydiv');
+										var num=0;
+										for(var ia=0; ia<selectpc.length; ia++){
+											if(selectpc[ia][1]==branchtext){
+												num+=1;
+												if(selectpc[ia][2]==1){
+													var fdiv=document.createElement('div');
+
+													var pcind=document.createElement('a');
+													var pcstatus=document.createElement('a');
+													pcind.innerHTML=num+':'+selectpc[ia][0];
+													pcstatus.innerHTML='    정상';
+													fdiv.appendChild(pcind)
+													fdiv.appendChild(pcstatus)
+													scandisplaydiv.appendChild(fdiv);
+												}else if(selectpc[ia][2]==0){
+													var fdiv=document.createElement('div');
+
+													var pcind=document.createElement('a');
+													var pcstatus=document.createElement('a');
+													pcind.innerHTML=num+':'+selectpc[ia][0];
+													pcstatus.innerHTML='    대기';
+													pcind.style.color='red';
+													pcstatus.style.color='green';
+
+													fdiv.appendChild(pcind)
+													fdiv.appendChild(pcstatus)
+													scandisplaydiv.appendChild(fdiv);
+
+												}else{
+													var fdiv=document.createElement('div');
+
+													var pcind=document.createElement('a');
+													var pcstatus=document.createElement('a');
+													pcind.innerHTML=num+':'+selectpc[ia][0];
+													pcstatus.innerHTML='    오류';
+													pcind.style.color='red';
+													pcstatus.style.color='green';
+
+													fdiv.appendChild(pcind)
+													fdiv.appendChild(pcstatus)
+													scandisplaydiv.appendChild(fdiv);
+
+												}
+											}
+									
+										}
+								
+										}*/
+
+
+
+
+
+										var fdiv=document.createElement('div');
+
+										var pcind=document.createElement('a');
+										var pcstatus=document.createElement('a');
+										pcind.innerHTML=fel.value;
+										pcstatus.innerHTML='    오류';
+										pcind.style.color='red';
+										pcstatus.style.color='green';
+										fdiv.appendChild(pcind)
+										fdiv.appendChild(pcstatus)
+										scandisplaydiv.appendChild(fdiv);
+
+
+
+										selectpc.push([fel.value,branch,2,0]);
+										/*
+										//parcelcode,branch,number status, ??
+										var chk1=checkItemExist(selectpc,fel.value);
+										if(chk1==0){//no exist
+											selectpc.push([fel.value,branch,2,0]);
+											//waitingpc.push([fel.value,branch]);
+
+										}*/
+
+
+
+
+
+									}
+								}
+							
+
+							/*
+							}else if(unichk!=0 && chk==0){
+								unifia.innerHTML='xui';
+								pcstatus[ic].pcstatus='xui';
+								pcstatus[ic].pcmsg='No Data';
+								unifia.style.color='red';
+
+
+
+							}else if(unichk==0 && chk==1){
+								unifia.innerHTML='esi';
+								pcstatus[ic].pcstatus='esi';
+								pcstatus[ic].pcmsg='Branch Office Error';
+								unifia.style.color='red';
+							}else if(unichk==0 && chk==0){
+								unifia.innerHTML='xsi';
+								pcstatus[ic].pcstatus='xsi';
+								pcstatus[ic].pcmsg='No Data';
+								unifia.style.color='red';*/
+
+
+
+							}else{
+								document.getElementById('scanparcela3').innerHTML='대기';
+								document.getElementById('scanparcela3').style.color='red';
+
+
+
+								var ediv=document.getElementById('errpicdiv');
+								if(ediv){
+									ediv.remove();
+								}
+
+								var errpicdiv=document.createElement('div');
+								var scanparceldiv=document.getElementById('scanparceldiv')
+								scanparceldiv.appendChild(errpicdiv);
+								
+						
+
+								errpicdiv.className='errpicdiv';
+								errpicdiv.innerHTML='errpic';
+								errpicdiv.id='errpicdiv';
+								errpicdiv.style.width='20%';
+								errpicdiv.style.display='inline-block';
+								//errpicdiv.style.cssFloat='left';
+
+								errpicdiv.onclick=function(){
+									return function(){
+										errwaitingPicContainer(40,10,10);
+									}
+								}();
+
+
+
+
+										var scandisplaydiv=document.getElementById('scandisplaydiv');
+										removeallele('scandisplaydiv');
+										var num=0;
+										for(var ia=0; ia<selectpc.length; ia++){
+											if(selectpc[ia][1]==branchtext){
+												if(selectpc[ia][2]==1){
+													num+=1;
+													var fdiv=document.createElement('div');
+
+													var pcind=document.createElement('a');
+													var pcstatus=document.createElement('a');
+													pcind.innerHTML=num+':'+selectpc[ia][0];
+													pcstatus.innerHTML='    정상';
+													fdiv.appendChild(pcind)
+													fdiv.appendChild(pcstatus)
+													scandisplaydiv.appendChild(fdiv);
+												}else if(selectpc[ia][2]==0){
+													num+=1;
+													var fdiv=document.createElement('div');
+
+													var pcind=document.createElement('a');
+													var pcstatus=document.createElement('a');
+													pcind.innerHTML=num+':'+selectpc[ia][0];
+													pcstatus.innerHTML='    대기';
+													pcind.style.color='red';
+													pcstatus.style.color='green';
+
+													fdiv.appendChild(pcind)
+													fdiv.appendChild(pcstatus)
+													scandisplaydiv.appendChild(fdiv);
+
+												}else if(selectpc[ia][2]==2){	
+
+
+													if(ia==0 || ia==selectpc.length-1){
+														num+=1;
+														//branch error indication
+														var fdiv=document.createElement('div');
+
+														var pcind=document.createElement('a');
+														var pcstatus=document.createElement('a');
+														pcind.innerHTML=num+':'+selectpc[ia][0];
+														pcstatus.innerHTML='    오류';
+														pcind.style.color='red';
+														pcstatus.style.color='green';
+
+														fdiv.appendChild(pcind)
+														fdiv.appendChild(pcstatus)
+														scandisplaydiv.appendChild(fdiv);
+													}else if(selectpc[ia-1][2]==2 && selectpc[ia-1][0]!=selectpc[ia][0]){
+														num+=1;
+														//branch error indication
+														var fdiv=document.createElement('div');
+
+														var pcind=document.createElement('a');
+														var pcstatus=document.createElement('a');
+														pcind.innerHTML=num+':'+selectpc[ia][0];
+														pcstatus.innerHTML='    오류';
+														pcind.style.color='red';
+														pcstatus.style.color='green';
+
+														fdiv.appendChild(pcind)
+														fdiv.appendChild(pcstatus)
+														scandisplaydiv.appendChild(fdiv);
+
+													}else if(selectpc[ia-1][2]==2 && selectpc[ia-1][0]==selectpc[ia][0]){
+		
+														//error indication
+														var fdiv=document.createElement('div');
+
+														var pcind=document.createElement('a');
+														var pcstatus=document.createElement('a');
+														pcind.innerHTML=num+':'+selectpc[ia][0];
+														pcstatus.innerHTML='    대기';
+														pcind.style.color='red';
+														pcstatus.style.color='green';
+
+														fdiv.appendChild(pcind)
+														fdiv.appendChild(pcstatus)
+														scandisplaydiv.appendChild(fdiv);
+													}else{	
+														num+=1;
+														//branch error indication
+														var fdiv=document.createElement('div');
+
+														var pcind=document.createElement('a');
+														var pcstatus=document.createElement('a');
+														pcind.innerHTML=num+':'+selectpc[ia][0];
+														pcstatus.innerHTML='    오류';
+														pcind.style.color='red';
+														pcstatus.style.color='green';
+
+														fdiv.appendChild(pcind)
+														fdiv.appendChild(pcstatus)
+														scandisplaydiv.appendChild(fdiv);
+
+													}
+
+												}else{
+													alert('deadly harmful error')
+
+												}
+											}
+									
+										}
+
+
+
+
+
+								/*
+
+
+								var scandisplaydiv=document.getElementById('scandisplaydiv');
+								removeallele('scandisplaydiv');
+								var num=0;
+								for(var ia=0; ia<selectpc.length; ia++){
+									if(selectpc[ia][1]==branchtext){
+										num+=1;
+										if(selectpc[ia][2]==1){
+											var fdiv=document.createElement('div');
+
+											var pcind=document.createElement('a');
+											var pcstatus=document.createElement('a');
+											pcind.innerHTML=num+':' +selectpc[ia][0];
+											pcstatus.innerHTML='    정상';
+											fdiv.appendChild(pcind)
+											fdiv.appendChild(pcstatus)
+											scandisplaydiv.appendChild(fdiv);
+										}else if(selectpc[ia][2]==0){
+											var fdiv=document.createElement('div');
+
+											var pcind=document.createElement('a');
+											var pcstatus=document.createElement('a');
+											pcind.innerHTML=num+':'+selectpc[ia][0];
+											pcstatus.innerHTML='    대기';
+											pcind.style.color='red';
+											pcstatus.style.color='green';
+
+											fdiv.appendChild(pcind)
+											fdiv.appendChild(pcstatus)
+											scandisplaydiv.appendChild(fdiv);
+										}else{
+											var fdiv=document.createElement('div');
+
+											var pcind=document.createElement('a');
+											var pcstatus=document.createElement('a');
+											pcind.innerHTML=num+':'+selectpc[ia][0];
+											pcstatus.innerHTML='    오류';
+											pcind.style.color='red';
+											pcstatus.style.color='green';
+
+											fdiv.appendChild(pcind)
+											fdiv.appendChild(pcstatus)
+											scandisplaydiv.appendChild(fdiv);
+
+
+										}
+									}
+							
+								}
+						
+								}*/
+
+
+
+								var fdiv=document.createElement('div');
+
+								var pcind=document.createElement('a');
+								var pcstatus=document.createElement('a');
+								pcind.innerHTML=fel.value;
+								pcstatus.innerHTML='    대기';
+								pcind.style.color='red';
+								pcstatus.style.color='green';
+								fdiv.appendChild(pcind)
+								fdiv.appendChild(pcstatus)
+								scandisplaydiv.appendChild(fdiv);
+
+
+								var chk1=checkItemExist(selectpc,fel.value);
+								if(chk1==0){//no exist
+									//waitingpc.push([fel.value,branch]);
+									//selectpc.push([fel.value,branch,0,0]);
+
+								}else{
+									alert('No Exist')
+								}
+
+
+
+
+
+							}
+							
+		
+
+			}
+
+
+			function removeItemFromExist(liststr,item){
+				var liststrl=liststr;
+				var nlist=[];
+				for(var ia=0; ia<liststrl.length; ia++){
+					if(liststrl[ia]==item){
+					}else{
+						nlist.push(liststrl[ia]);
+					}
+				}
+				return nlist;
+			}
+			function checkItemExist(liststr,item){
+				var liststrl=liststr;
+
+				var chk=0;
+				for(var ia=0; ia<liststrl.length; ia++){
+					if(liststrl[ia][0]==item){
+						chk=1;
+						break;
+					}
+				}
+
+				return chk;
+			}
+
+
+
+			/*
+			function clickToChosen(item,madaeind){
+				var chk=checkItemExist(chosenlist,item);
+				if(chk==0){//no exist
+					chosenlist.push(item);
+
+				}else{
+					chosenlist=removeItemFromExist(chosenlist,item);
+				}
+
+				chosenRepresent(madaeind,chosenlist);
+
+			}*/
+
+
+			document.onkeydown = function(e){
+				if(window.event.keyCode==13){
+					checkParcelcode();	
+				//}else if(e.shiftKey && e.which==81){//eraser;
+				}
+			}
+
