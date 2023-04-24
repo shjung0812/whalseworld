@@ -136,13 +136,12 @@ html
 			}
 
 
+		
+
 
 			//common information gethering. order: 'registereddate,roundnum,branchoffice,status'
 			socket.emit('errorboard',{option:'call'});
 			socket.on('errorboardafter',function(a){
-
-
-				console.log(a);
 
 				if(a.option=='call'){
 					var errlist =a.err;
@@ -164,7 +163,6 @@ html
 					}
 
 					var errorboard=document.getElementById('errorboard');
-
 					for(var ib=0; ib<indslot.length; ib++){
 						var conA1=document.createElement('div');
 						conA1.className='conA1'
@@ -176,14 +174,9 @@ html
 						
 							var conB1=document.createElement('div');	
 							conB1.className='conB1';
-			
-
-
-	
 							var conC1=document.createElement('div');
 							conC1.className='conC1';
 							conB1.appendChild(conC1);
-
 							var conD1=document.createElement('div');
 							var conE1D1=document.createElement('div');
 							var conE2D1=document.createElement('div');	
@@ -262,10 +255,6 @@ html
 							dummyinput.placeholder='송장의 수량입력';
 							containerdiv1.appendChild(dummyinput);
 
-							//conB1.appendChild(conC1_errpic);
-							//fdiv.appendChild(errmsgdiv);
-							//fdiv.appendChild(cdate);
-							//fdiv.appendChild(pclistnumid);
 							conB1.appendChild(pcinputdiv);
 							conB1.appendChild(dummycountdiv);
 
