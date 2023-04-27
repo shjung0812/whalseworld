@@ -1438,6 +1438,11 @@ whalse.on('connection',function(socket){
 			sf.whalsegetinfodb('update errorboard set transform="edited" where '+wh, function(b){
 				socket.emit('errorboardafter',{option:'complete'})
 			});
+
+		}else if(a.option=='remove'){
+			sf.whalsegetinfodb('delete from errorboard where numid='+a.numid, function(b){
+				socket.emit('errorboardafter',{option:'remove'})
+			});
 		};
 	});
 	socket.on('outgoingdata',function(a){

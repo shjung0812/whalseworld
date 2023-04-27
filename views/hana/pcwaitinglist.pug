@@ -61,6 +61,11 @@ html
 			.ordernumsdiv {
 				margin:3% 0;
 			}
+			.removediv:hover{
+				background-color:red;
+				color:white;
+
+			}
 			.completediv:hover{	
 				//background-color:purple;
 				//color:white;
@@ -258,6 +263,19 @@ html
 							conB1.appendChild(pcinputdiv);
 							conB1.appendChild(dummycountdiv);
 
+							var removediv=document.createElement('div');
+							removediv.className='removediv'
+							removediv.innerHTML='remove';
+							containerdiv1.appendChild(removediv);
+
+							removediv.onclick=function(i){
+								return function(){
+										//socket.emit('errorboard',{option:'remove',numid:i});	
+										alert('delete'+i);
+								}
+							}(errlist[ia].numid);
+
+
 
 
 							conA1.appendChild(conB1);
@@ -330,24 +348,7 @@ html
 						}(chk0));
 
 
-						/*
 				
-						var removediv=document.createElement('div');
-						removediv.className='removediv'
-						removediv.innerHTML='remove';
-						conA1.appendChild(removediv);
-
-						removediv.onclick=function(i,j){
-							return function(){
-								if(j==1){
-									//socket.emit('errorboard',{option:'complete',errstr:i});	
-								}else{
-									alert('no parcelcode data');
-								}
-							}
-						}(relatederr, chk0);*/
-
-
 						
 
 						errorboard.appendChild(conA1);
