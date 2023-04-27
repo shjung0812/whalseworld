@@ -62,8 +62,8 @@ html
 				margin:3% 0;
 			}
 			.completediv:hover{	
-				background-color:purple;
-				color:white;
+				//background-color:purple;
+				//color:white;
 			}
 			.completediv {
 				width:10%;
@@ -270,7 +270,6 @@ html
 
 					} // End: for(var ia=0; ia<errlist.length; ia++){
 
-						
 
 						var chk0=1;
 						for(var ic=0; ic<pcode.length; ic++){
@@ -291,6 +290,15 @@ html
 						completediv.className='completediv'
 						completediv.innerHTML='완료';
 						conA1.appendChild(completediv);
+
+
+					
+						if(chk0==0){
+							completediv.style.color='red';
+						}else{
+						}
+
+
 						completediv.onclick=function(i,j){
 							return function(){
 								if(j==1){
@@ -301,16 +309,46 @@ html
 							}
 						}(relatederr, chk0);
 
+						completediv.addEventListener('mouseover',function(j){
+							return function(){
+								if(j==1){
+									this.style.backgroundColor='purple';
+									this.style.color='white';
+								}
+							}
+						}(chk0));
+
+						completediv.addEventListener('mouseout',function(j){
+							return function(){
+								if(j==1){
+									this.style.backgroundColor='';
+									this.style.color='black';
+								}
+							}
+
+
+						}(chk0));
+
+
 						/*
+				
+						var removediv=document.createElement('div');
+						removediv.className='removediv'
+						removediv.innerHTML='remove';
+						conA1.appendChild(removediv);
 
-						var finput=document.createElement('input');
-						finput.type='file';
+						removediv.onclick=function(i,j){
+							return function(){
+								if(j==1){
+									//socket.emit('errorboard',{option:'complete',errstr:i});	
+								}else{
+									alert('no parcelcode data');
+								}
+							}
+						}(relatederr, chk0);*/
 
-						var sinput=document.createElement('input');
-						sinput.type='submit';
-						var formwaiting=document.getElementById('waitingform');
-						formwaiting.appendChild(finput);
-						formwaiting.appendChild(sinput);*/
+
+						
 
 						errorboard.appendChild(conA1);
 
