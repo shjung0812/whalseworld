@@ -116,6 +116,7 @@ html
 		div
 			form(action='/whalse_uploadfile' enctype='multipart/form-data' method='post' accept-charset='UTF-8', id='waitingform')
 				input(type='file' name='whalse_data')
+				input(type='text' name='pageaddr' value='/whalse/pcwaitinglist' hidden)
 				input(type='submit' value='Upload a file')
 
 
@@ -144,10 +145,10 @@ html
 		
 
 
+
 			//common information gethering. order: 'registereddate,roundnum,branchoffice,status'
 			socket.emit('errorboard',{option:'call'});
 			socket.on('errorboardafter',function(a){
-
 				if(a.option=='call'){
 					var errlist =a.err;
 
@@ -168,6 +169,8 @@ html
 					}
 
 					var errorboard=document.getElementById('errorboard');
+					removeallele('errorboard');
+
 					for(var ib=0; ib<indslot.length; ib++){
 						var conA1=document.createElement('div');
 						conA1.className='conA1'
@@ -270,7 +273,7 @@ html
 
 							removediv.onclick=function(i){
 								return function(){
-										//socket.emit('errorboard',{option:'remove',numid:i});	
+										socket.emit('errorboard',{option:'remove',numid:i});	
 										alert('delete'+i);
 								}
 							}(errlist[ia].numid);
@@ -354,22 +357,23 @@ html
 						errorboard.appendChild(conA1);
 
 					}
-				}else if(a.option=='complete'){ //Middle: if(a.option=='call'){
-					alert('complete');
+				}else if(a.option=='complete' || a.option=='remove'){ //Middle: if(a.option=='call'){
+					alert(a.option);
 					location.reload();
 				}//End: if(a.option=='call'){
 			
 			});
 
 			function searchByOrderday(ini,fdiv,numid){
+
 				var keyword=document.getElementById('ordersearchinput'+numid).value;
 				removeallele('containerdiv2'+numid);
 				if(keyword!=''){
 					var searchlist=[];
+					var _chkpc=0;
 					for(var ia=0; ia<ini.length; ia++){
 						if(keyword==ini[ia].w_orderday){
-							//searchlist.push(ini[ia].ordernum);
-
+							console.log(ini[ia].parcel_code);
 							var chk=0;
 							for(var ib=0; ib<searchlist.length; ib++){
 								if(searchlist[ib]==ini[ia].ordernum){
@@ -397,12 +401,22 @@ html
 								fdiv.appendChild(sdiv);	
 								searchlist.push(ini[ia].ordernum);
 							}
+
+							if((ini[ia].parcel_code!='') &&(ini[ia].parcel_code!='미출발')){
+								_chkpc=1;
+							}
 						}
 					}
 
 					if(searchlist.length==0){
 						alert('No search Result');
+					}else{
+						if(_chkpc==0){
+							alert('해당 주문번호에 송장번호가 하나도 입력되어있지 않습니다. 그대로 진행 하시겠습니까?');
+						}
+
 					}
+
 				}else{
 					alert('insert keyword');
 				}

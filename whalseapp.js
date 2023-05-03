@@ -1012,20 +1012,18 @@ var XLSX=require('xlsx');
 var validdata=['numid','operationid','ordernum','engid','chid','sellid','sellername','payment','deliveryfee','discount','sku_price','order_status','order_date','pay_date','shipment','w_orderday','url','post_code','contact_num','phonenum','pro_name','quantity','unit','pro_num','model','offer_id','sku_id','material_number','item_name','item_color','item_size','match_id','search_name','search_color','search_size','order_name','order_color','order_size','order_quantity','parcel_code','depart_time','delivery_status','barcode','kor_item_name','kor_option','img_url','plcode','totalpayment','statuscode','arrival0num','arrival1num','arrival2num','arrival3num','status0text','status1text','status2text','status3text','status0pic','status1pic','status2pic','status3pic','parcelnumbering','madenum','category']
 
 app.post('/whalse_uploadfile',whalse_upload.single('whalse_data'),function(req,res){
+	res.redirect(req.body.pageaddr)
 	//res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' })
-	res.send('succeed:'+req.file);
 	var workbook = XLSX.readFile(req.file.path);
 	var sheet_name_list = workbook.SheetNames;
 	var xlData=XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]]);
+
 
 
 	var whalsedata=[];
 	//for(var ia=0; ia<xlData.length; ia++){
 		//whalsedata.push(Object.values(xlData[ia]))	
 	//}
-
-
-
 
 
 	//server setting and datasetting harmonic test
@@ -1056,7 +1054,6 @@ app.post('/whalse_uploadfile',whalse_upload.single('whalse_data'),function(req,r
 	}
 
 
-	console.log(xlData);
 	//creating test
 	var wb=XLSX.utils.book_new();
 	var wsheet=XLSX.utils.aoa_to_sheet([
@@ -1105,9 +1102,7 @@ app.post('/whalse_uploadfile',whalse_upload.single('whalse_data'),function(req,r
 		}
 
 
-		console.log(xlData.length, matchidcheck)	
-
-		matchidcheck=0;
+		
 
 		//if chk1 is 1 then inserting process is started otherwise cancled. 
 		if(matchidcheck*(chk1==1 || k.length==0)){
