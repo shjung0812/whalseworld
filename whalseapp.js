@@ -1413,7 +1413,7 @@ whalse.on('connection',function(socket){
 
 	socket.on('errorboard',function(a){
 		if(a.option=='call'){
-			sf.whalsegetinfodb('select w_orderday, ordernum, match_id,parcel_code from initialdata',function(e){
+			sf.whalsegetinfodb('select w_orderday, ordernum, match_id,parcel_code,order_quantity from initialdata',function(e){
 			sf.whalsegetinfodb('select * from errorboard where erroption="errorwaiting"', function(a){
 				socket.emit('errorboardafter',{option:'call',a:e,err:a})
 			});
