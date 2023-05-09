@@ -11,6 +11,7 @@ var server=require('http').createServer(app);
 //var server=https.createServer(options,app);
 var io = require('socket.io')(server);
 
+
 /*
 app.all('*',(req,res,next)=>{
 	let protocol = req.headers['x-forwarded-proto']||req.protocol;
@@ -31,7 +32,7 @@ var fileType = import('file-type');
 //import {readChunk} from 'read-chunk';
 //import {fileTypeFromFile} from 'file-type';
 
-
+const crypto=require('crypto')
 
 const multer = require('multer');
 //const upload=multer({dest:__dirname+'/public'});
@@ -63,6 +64,7 @@ app.set('view engine', 'pug');
 app.set('views', __dirname + '/views');
 app.use(express.static(__dirname + '/public'));
 
+app.use('/bootstrap',express.static(__dirname+"/node_modules/bootstrap/dist/"));
 
 var bodyParser = require('body-parser')
 app.use(bodyParser.urlencoded({extended: false}));
