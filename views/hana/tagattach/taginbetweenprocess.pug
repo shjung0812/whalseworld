@@ -1,0 +1,116 @@
+html
+	head
+		script(src='/socket.io/socket.io.js')
+		style.
+			#availabletagdiv {
+				width:95%;
+				border:1px solid black;
+				overflow:auto;
+			}
+			.coldiv {
+				float:left;
+				width:20%;
+			}
+			.titlediv {
+				width:100%;
+				background-color:green;
+				color:white;
+			}
+			.madaechk {
+				float:left;
+			}
+
+	body
+		p tag inbetween process
+		div(id='availabletagdiv')
+		div(id='madaelist')
+		script.
+
+			var socket = io('/whalse');
+
+			var madaedata=!{JSON.stringify(a)};
+			console.log(madaedata);
+
+
+			var tag = !{JSON.stringify(tag)};
+			var chosentag='';
+			var availabletagdiv=document.getElementById('availabletagdiv');
+
+			var titlelist=['numid','tagname','tagnote','taginfo']
+			for(var ia=0; ia<titlelist.length; ia++){
+				var cdiv=document.createElement('div');
+				cdiv.className='coldiv';
+
+				var fdiv=document.createElement('div');
+				fdiv.className='titlediv';
+				fdiv.innerHTML=titlelist[ia];
+				cdiv.appendChild(fdiv);
+				
+				availabletagdiv.appendChild(cdiv);
+
+			}			
+
+
+			for(var ib=0; ib<tag.length; ib++){
+			for(var ia=0; ia<titlelist.length; ia++){
+
+				var fdiv=document.getElementsByClassName('coldiv')
+
+
+
+				var cfdiv=document.createElement('div');
+				cfdiv.className='cfdiv';
+				cfdiv.innerHTML=tag[ib][titlelist[ia]];
+				cfdiv.onclick=function(k){
+					return function(){
+						chosentag=k
+					}
+				}(tag[ib].numid);
+				fdiv[ia].appendChild(cfdiv);
+
+			}
+			}
+
+
+			function removeallele(parentid){
+				var parent=document.getElementById(parentid);
+				while(parent.firstChild){
+					parent.firstChild.remove();
+				}
+			}
+
+
+
+
+
+			var indmadae=[];
+			for(var ia=0; ia<madaedata.length; ia++){
+				var chk=0;
+				for(var ib=0; ib<indmadae.length; ib++){
+					if(indmadae[ib]==madaedata[ia].madaename){
+						chk=1;
+						break;
+					}
+				}
+				if(chk==0){
+					indmadae.push(madaedata[ia].madaename)
+				}
+			}
+
+			var madaelist=document.getElementById('madaelist');
+			for(var ib=0; ib<indmadae.length; ib++){
+				var sdiv=document.createElement('div');
+				var sdivcheck=document.createElement('input');	
+				sdivcheck.setAttribute('data-madaename',indmadae[ib]);
+				sdivcheck.type='checkbox';
+				sdivcheck.className='madaechk';
+				sdivcheck.id='madaechk'+ib;
+				sdiv.appendChild(sdivcheck);
+
+				var madaediv=document.createElement('div');
+
+				madaediv.innerHTML=indmadae[ib];
+				sdiv.appendChild(madaediv);
+				madaelist.appendChild(sdiv);
+			}
+

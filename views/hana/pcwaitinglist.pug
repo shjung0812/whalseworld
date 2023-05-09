@@ -1,0 +1,372 @@
+html
+	head
+		title Superior function
+		script(src='/socket.io/socket.io.js')
+		meta( charset='utf-8')
+		meta(name='viewpoart' content='width=device-width, initial-scale=1')
+		//link(href='/bootstrap/css/bootstrap.min.css' rel='stylesheet' integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous")
+		link(href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous")
+		style.
+			#errorboard {
+				overflow:auto;
+			}
+			.conA1 {
+				width:90%;
+				//height:15%;
+				margin:2% 0;
+				overflow:auto;
+				border:1px solid black;
+			}
+			.conB1 {
+				width:100%;
+				height:25%;
+				margin:2% 0;
+			}
+			.conC1 {
+				width:30%;
+				height:100%;
+				float:left;
+				overflow:auto;
+				display:inline-block;
+
+			}
+			.conD4_ {
+				width:25%;
+				height:100%;
+				float:left;
+				overflow:auto;
+				display:inline-block;
+				
+			}
+			.errmsgdiv {
+				width:25%;
+				height:100%;
+				float:left;
+				overflow:auto;
+				display:inline-block;
+
+			}
+			.cdate, .pclistnumid, .conC1_errpic, .errmsgdiv, .pcinputdiv {
+				width:25%;
+				height:100%;
+				float:left;
+				overflow:auto;
+				display:inline-block;
+
+			}
+			.pcinputdiv {
+				background-color:yellow;
+			}
+			.containerdiv2 {
+				overflow:auto;
+				height:50%;
+				
+			}
+			.ordernumsdiv {
+				margin:3% 0;
+			}
+			.removediv:hover{
+				background-color:red;
+				color:white;
+
+			}
+			.completediv:hover{	
+				//background-color:purple;
+				//color:white;
+			}
+			.completediv {
+				width:10%;
+				cursor:pointer;
+			}
+			.conD1 {
+				width:98%;
+				height:10%;
+				border:1px solid black;
+			}
+			.conD2 {
+				width:98%;
+				height:10%;
+				border:1px solid black;
+			}
+			.conD3 {
+				width:98%;
+				height:10%;
+				border:1px solid black;
+			}
+			.conD4 {
+				width:98%;
+				height:65%;
+				border:1px solid black;
+			}
+
+			.conE1D1{
+				width:48%;
+				float:left;
+				//border:1px solid black;
+			}
+			.conE2D1 {
+				width:48%;
+				float:left;
+				//border:1px solid black;
+			}
+			.conD4 img {
+				width:100%;
+				height:100%;
+				object-fit:contain;
+			}
+
+
+	body
+		div
+			form(action='/whalse_uploadfile' enctype='multipart/form-data' method='post' accept-charset='UTF-8', id='waitingform')
+				input(type='file' name='whalse_data')
+				input(type='text' name='pageaddr' value='/whalse/pcwaitinglist' hidden)
+				input(type='submit' value='Upload a file')
+		div 	
+			header(class='d-flex justify-content-center py-3')
+				ul(class='nav nav-pills')
+					li(class='nav-item')
+							a(href='#' class='nav-link active' aria-current='page') Home
+
+		div(id='errorboard')
+		script.
+			
+			/*the first required action is to call waiting data caused by error.
+				
+				From the waiting data, it need to be grouped by combination of 3 data; registered date, round number in the registered date and branchoffice. 
+	
+			*/
+
+			var socket = io('/whalse',{
+				transports:['websocket'],
+				upgrade:false
+			});
+
+
+
+		
+
+
+
+			//common information gethering. order: 'registereddate,roundnum,branchoffice,status'
+			socket.emit('errorboard',{option:'call'});
+			socket.on('errorboardafter',function(a){
+				if(a.option=='call'){
+					var errlist =a.err;
+
+					var indslot=[];
+					for(var ia=0; ia<errlist.length; ia++){
+						var chk=0;
+						if(errlist[ia].transform=='ini'){
+							for(var ib=0; ib<indslot.length; ib++){
+								if(indslot[ib][0]==errlist[ia].registereddate && indslot[ib][1]==errlist[ia].roundnum && indslot[ib][2]==errlist[ia].branchoffice){
+									chk=1;
+									break;
+								}
+							}
+							if(chk==0){
+								indslot.push([errlist[ia].registereddate, errlist[ia].roundnum, errlist[ia].branchoffice]);
+							}
+						}
+					}
+
+					var errorboard=document.getElementById('errorboard');
+					removeallele('errorboard');
+
+					for(var ib=0; ib<indslot.length; ib++){
+						var conA1=document.createElement('div');
+						conA1.className='conA1'
+						
+						var relatederr=[];
+						var pcode=[];
+					for(var ia=0; ia<errlist.length; ia++){
+						if(indslot[ib][0]==errlist[ia].registereddate && indslot[ib][1]==errlist[ia].roundnum && indslot[ib][2]==errlist[ia].branchoffice && errlist[ia].transform=='ini'){
+						
+							var conB1=document.createElement('div');	
+							conB1.className='conB1';
+							var conC1=document.createElement('div');
+							conC1.className='conC1';
+							conB1.appendChild(conC1);
+							var conD1=document.createElement('div');
+							var conE1D1=document.createElement('div');
+							var conE2D1=document.createElement('div');	
+							conE1D1.className='conE1D1';
+							conE2D1.className='conE2D1';
+							conD1.appendChild(conE1D1);
+							conD1.appendChild(conE2D1);
+							conE1D1.innerHTML='송장수';
+							conE2D1.innerHTML=errlist[ia].registernum;
+		
+							var conD2=document.createElement('div');
+							var conD3=document.createElement('div');
+							var conD4=document.createElement('div');
+							conD1.className='conD1';
+							conD2.className='conD2';
+							conD3.className='conD3';
+							conD4.className='conD4';
+							
+							if(errlist[ia].errorpic!=null){
+								var conD4_img=document.createElement('img');
+								conD4_img.src='/whalse/whalsewaiting/'+errlist[ia].errorpic;
+								conD4.appendChild(conD4_img);
+							}else{
+							}
+
+							conC1.appendChild(conD1);
+							conC1.appendChild(conD2);
+							conC1.appendChild(conD3);
+							conC1.appendChild(conD4);
+
+						
+							var errmsgdiv=document.createElement('div');
+							errmsgdiv.className='errmsgdiv'
+							errmsgdiv.innerHTML=errlist[ia].errormsg;
+
+
+							var cdate=document.createElement('div');
+							cdate.innerHTML=errlist[ia].createdate;
+							cdate.className='cdate';
+
+							var pclistnumid=document.createElement('div');
+							pclistnumid.innerHTML=errlist[ia].pclistnumid;
+							pclistnumid.className='pclistnumid';
+
+
+
+							var pcinputdiv=document.createElement('div');
+							pcinputdiv.className='pcinputdiv';
+							var containerdiv1=document.createElement('div');
+							pcinputdiv.appendChild(containerdiv1);
+
+							var ordersearchinput=document.createElement('input');
+							ordersearchinput.id='ordersearchinput'+errlist[ia].numid;
+							containerdiv1.appendChild(ordersearchinput);
+
+							var containerdiv2=document.createElement('div');
+							containerdiv2.id='containerdiv2'+errlist[ia].numid;
+							containerdiv2.className='containerdiv2';
+							pcinputdiv.appendChild(containerdiv2);
+
+
+
+							var schbutton=document.createElement('button');
+							containerdiv1.appendChild(schbutton);
+							schbutton.innerHTML='Search';
+							schbutton.onclick=function(i,j,k){
+								return function(){
+									searchByOrderday(i,j,k)
+								}
+							}(a.a,containerdiv2,errlist[ia].numid);
+								
+
+							var dummycountdiv=document.createElement('div');
+							dummycountdiv.className='dummycountdiv';
+							
+							var dummyinput=document.createElement('input');
+							dummyinput.id='dummycountdiv'+errlist[ia].numid;
+							dummyinput.placeholder='송장의 수량입력';
+							containerdiv1.appendChild(dummyinput);
+
+							conB1.appendChild(pcinputdiv);
+							conB1.appendChild(dummycountdiv);
+
+							var removediv=document.createElement('div');
+							removediv.className='removediv'
+							removediv.innerHTML='remove';
+							containerdiv1.appendChild(removediv);
+
+							removediv.onclick=function(i){
+								return function(){
+										//socket.emit('errorboard',{option:'remove',numid:i});	
+										alert('delete'+i);
+								}
+							}(errlist[ia].numid);
+
+
+
+
+							conA1.appendChild(conB1);
+
+							relatederr.push(errlist[ia].numid);
+							pcode.push(errlist[ia].errparcelcode);
+							
+						} // End: if(indslot[ib][0]==errlist[ia].registereddate && indslot[ib][1]==errlist[ia].roundnum && indslot[ib][2]==errlist[ia].branchoffice){
+
+
+					} // End: for(var ia=0; ia<errlist.length; ia++){
+
+
+						var chk0=1;
+						for(var ic=0; ic<pcode.length; ic++){
+							var chk1=0;
+							for(var id=0; id<a.a.length; id++){
+								if(pcode[ic]==a.a[id].parcel_code){
+									chk1=1;
+									break;
+									
+								}
+							}
+							if(chk1==0){
+								chk0=0;
+								break;
+							}
+						}	
+						var completediv=document.createElement('div');
+						completediv.className='completediv'
+						completediv.innerHTML='완료';
+						conA1.appendChild(completediv);
+
+
+					
+						if(chk0==0){
+							completediv.style.color='red';
+						}else{
+						}
+
+
+						completediv.onclick=function(i,j){
+							return function(){
+								if(j==1){
+									//socket.emit('errorboard',{option:'complete',errstr:i});	
+								}else{
+									alert('no parcelcode data');
+								}
+							}
+						}(relatederr, chk0);
+
+						completediv.addEventListener('mouseover',function(j){
+							return function(){
+								if(j==1){
+									this.style.backgroundColor='purple';
+									this.style.color='white';
+								}
+							}
+						}(chk0));
+
+						completediv.addEventListener('mouseout',function(j){
+							return function(){
+								if(j==1){
+									this.style.backgroundColor='';
+									this.style.color='black';
+								}
+							}
+
+
+						}(chk0));
+
+
+				
+						
+
+						errorboard.appendChild(conA1);
+
+					}
+				}else if(a.option=='complete' || a.option=='remove'){ //Middle: if(a.option=='call'){
+					alert(a.option);
+					location.reload();
+				}//End: if(a.option=='call'){
+			
+			});
+		//script(src="/bootstrap/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous")
+		script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous")
+		script(src='/jsfile/pcwaiting_list_func.js')

@@ -1,0 +1,208 @@
+html
+	head
+		style.
+			.pcslot a {
+				margin:0 5%;
+				width:7%;
+				display:inline-block;
+			}
+			.pcslot:hover {
+				background-color:purple;
+				color:white;
+			}
+			.pcslot {
+				cursor:pointer;
+			}
+	body
+		h2 Scan Status
+		div(id='output')
+
+		
+	script.
+		var pcl=!{JSON.stringify(pcl)};
+		var orderlist=!{JSON.stringify(orderlist)};
+		var err=!{JSON.stringify(e)};
+
+
+		var headlist=['현황','스캔차수','송장수', '송장순서','작업버튼','출고날짜','마킹번호','송장순서']
+
+
+
+
+		var pctotal=[];
+
+
+		//arrivaldate, 
+		for(var ia=0;ia<pcl.length; ia++){
+			pctotal.push([pcl[ia].arrivaldate,pcl[ia].roundnum,pcl[ia].branchoffice,'정상',1,pcl[ia].parcelcodelist,new Date(pcl[ia].arrivaldate),pcl[ia].registerseq])
+		}
+		for(var ia=0;ia<err.length; ia++){
+			pctotal.push([err[ia].registereddate,err[ia].roundnum,err[ia].branchoffice,'대기',err[ia].transform,'',new Date(err[ia].registereddate),err[ia].registernum])
+		}
+
+
+		pctotal.sort((a,b) => (a[6]-b[6]))
+		var indslot=[];
+		for(var ia=0; ia<pctotal.length; ia++){
+			var chk=0;
+			for(var ib=0; ib<indslot.length; ib++){
+				if(indslot[ib][0]==pctotal[ia][0] && indslot[ib][1]==pctotal[ia][1] && indslot[ib][2]==pctotal[ia][2] && indslot[ib][3]==pctotal[ia][3]){
+					chk=1;
+					break;
+				}
+			}
+			if(chk==0){
+				indslot.push([pctotal[ia][0], pctotal[ia][1], pctotal[ia][2], pctotal[ia][3],pctotal[ia][4],pctotal[ia][5]]);
+			}
+		}
+
+		for(var ia=0; ia<indslot.length; ia++){
+			
+			
+
+
+			if(ia==0){
+				var fdiv=document.createElement('div');
+				fdiv.className='pcslot';
+
+
+
+				var cstatus=document.createElement('a');
+				var cdate=document.createElement('a');
+				var croundnum=document.createElement('a');
+				var cbranchoffice=document.createElement('a');
+				var pcjudge=document.createElement('a');
+				var pccounta=document.createElement('a');
+				var pcordera=document.createElement('a');
+				var gobutton=document.createElement('a');
+
+
+
+
+				cstatus.innerHTML=headlist[0];
+				cdate.innerHTML=headlist[1];
+				pccounta.innerHTML=headlist[2];
+				pcordera.innerHTML=headlist[3];
+				gobutton.innerHTML=headlist[4];
+				fdiv.appendChild(cstatus);
+				fdiv.appendChild(cdate);
+				fdiv.appendChild(pccounta);
+				fdiv.appendChild(pcordera);
+				fdiv.appendChild(gobutton);
+
+				fdiv.style.marginBottom='2%';
+				document.getElementById('output').appendChild(fdiv);
+
+			}
+
+
+			var fdiv=document.createElement('div');
+			fdiv.className='pcslot';
+
+
+
+			var cstatus=document.createElement('a');
+			var cdate=document.createElement('a');
+			var croundnum=document.createElement('a');
+			var cbranchoffice=document.createElement('a');
+			var pcjudge=document.createElement('a');
+			var pccounta=document.createElement('a');
+			var gobutton=document.createElement('a');
+			var pcordera=document.createElement('a');
+
+
+			cdate.innerHTML=indslot[ia][0]+' '+indslot[ia][1]+'차'+' '+indslot[ia][2]+' '+indslot[ia][3];
+
+			var pccount=0;
+			var pclstr='';
+			var pcorder='';
+			var tooutput=[];
+			for(var ib=0; ib<pctotal.length; ib++){
+				if(indslot[ia][0]==pctotal[ib][0] && indslot[ia][1]==pctotal[ib][1] && indslot[ia][2]==pctotal[ib][2] && indslot[ia][3]==pctotal[ib][3]){	
+	
+					
+					if(pccount==0){
+						pclstr+=pctotal[ib][5];
+						pcorder+=pctotal[ib][7] + '번';
+					}else{
+						pcorder+=','+pctotal[ib][7]+'번';
+						pclstr+=','+pctotal[ib][5];
+					}
+					tooutput.push(pctotal[ib]);
+					pccount+=1;
+					
+				}
+
+				/*
+				var jpcstatus=JSON.stringify(pcl[ia].parcelcodelist)
+				var gobuttondiv=document.createElement('div');	
+				var gobutton=document.createElement('button');
+				//gobuttondiv.appendChild(gobutton);
+				gobutton.innerHTML='Output';
+				gobutton.onclick=function(s){
+					return function(){
+						console.log(s);
+						window.location='./selectoutput?selectpclist='+s+'&fieldstring='+orderlist[0].orderset;
+					}
+				}(jpcstatus);
+				fdiv.appendChild(gobutton);*/
+
+
+			}
+			pccounta.innerHTML=pccount;
+
+
+
+			var tooutputstr=JSON.stringify(tooutput)
+
+			if(indslot[ia][4]==1){
+				cstatus.innerHTML='작업대기';
+
+				gobutton.onclick=function(s,k){
+					return function(){
+						window.location='./selectoutput?selectpclist='+s+'&fieldstring='+orderlist[0].orderset+'&tooutputstr='+k;
+					}
+				}(pclstr,tooutputstr);
+				gobutton.innerHTML='GO';
+			}else if(indslot[ia][4]=='ini'){
+				pcordera.innerHTML=pcorder;
+				cstatus.innerHTML='데이터대기';
+				gobutton.innerHTML='GO';
+
+				gobutton.style.color='red';
+				gobutton.style.backgroundColor='black';
+				//gobutton.style.backgroundColor='2px 2px 4px black';
+			}else if(indslot[ia][4]=='edited'){
+				pcordera.innerHTML=pcorder;
+				cstatus.innerHTML='작업대기';
+				gobutton.innerHTML='GO';
+				gobutton.onclick=function(s){
+					return function(){
+						window.location='./selectoutput?selectpclist='+s+'&fieldstring='+orderlist[0].orderset;
+					}
+				}(pclstr);
+
+				gobutton.style.color='red';
+				gobutton.style.backgroundColor='black';
+
+			}else{
+			}
+
+
+	
+			fdiv.appendChild(cstatus);
+			fdiv.appendChild(cdate);
+			//fdiv.appendChild(croundnum);
+			//fdiv.appendChild(cbranchoffice);
+			//fdiv.appendChild(pcjudge);
+			fdiv.appendChild(pccounta);
+			fdiv.appendChild(pcordera);
+
+			fdiv.appendChild(gobutton);
+
+
+			document.getElementById('output').appendChild(fdiv);
+
+			
+		}
+		

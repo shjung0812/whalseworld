@@ -1,0 +1,153 @@
+html
+	head
+		script(src='/socket.io/socket.io.js')
+		style.
+			#webtagcreatediv {
+				width:100%;
+				height:30%;
+			}
+			.webtagcolumn {
+				border:1px solid black;
+				float:left;
+				width:18%;
+				
+			}
+			#webpageorderfreediv {
+				overflow:auto;
+				border:1px solid black;
+			}
+			.freefdiv {
+				overflow:auto;
+				
+			}
+			.wpofdcontainer {
+				width:20%;
+				float:left;
+			}
+			.titlebar {
+				background-color:green;
+				overflow:auto;
+			}
+			.titlebar div {
+				width:20%;
+				float:left;
+				color:white;
+			}
+
+	body
+		p webtag Definition
+		div(id='webtagcreatediv')
+		div(id='webpageorderdiv')
+		div(id='webpageorderfreediv')
+			
+		script.
+
+			var socket = io('/whalse');
+			var wpd=!{JSON.stringify(wpd)}
+			console.log(wpd);
+
+	
+
+			var webtagcreatediv=document.getElementById('webtagcreatediv');
+			var wpod=document.getElementById('webpageorderdiv');
+			var wpofd=document.getElementById('webpageorderfreediv');
+
+
+			//title bar insert
+			var titlelist=['id','webpageurl','webpageinfo','ordernum']		
+			var titlebardiv_order=document.createElement('div');
+			titlebardiv_order.className='titlebar';
+			var titlebardiv_free=document.createElement('div');
+			titlebardiv_free.className='titlebar';
+
+			for(var ia=0;ia<titlelist.length; ia++){
+				var fdiv=document.createElement('div');
+				fdiv.innerHTML=titlelist[ia];
+				titlebardiv_order.appendChild(fdiv);
+			}
+			wpofd.appendChild(titlebardiv_order);
+
+			for(var ia=0; ia<wpd.length; ia++){
+				if(wpd[ia].webpageorder!=null){
+					//
+				}else{
+					//
+					var fdiv=document.createElement('div');
+					fdiv.className='freefdiv';
+					for(var ib=0; ib<4; ib++){
+						var sdiv=document.createElement('div');
+						sdiv.className='wpofdcontainer';
+						if(ib==0){
+							sdiv.innerHTML=wpd[ia].numid;
+							fdiv.appendChild(sdiv);
+						}else if(ib==1){
+							sdiv.innerHTML=wpd[ia].webpageurl;
+							fdiv.appendChild(sdiv);
+						}else if(ib==2){
+							sdiv.innerHTML=wpd[ia].webpageinfo;
+							fdiv.appendChild(sdiv);
+						}else if(ib==3){
+							sdiv.innerHTML='NULL';
+							//sdiv.innerHTML=wpd[ia].webpageorder;
+							fdiv.appendChild(sdiv);
+
+						}
+					}
+					wpofd.appendChild(fdiv);
+				}
+			}
+			
+			var createnum=2;
+			for(var ia=0; ia<createnum+1; ia++){
+				var fdiv=document.createElement('div');
+				fdiv.className='webtagcolumn';
+				var webtagtitle=document.createElement('div');
+				var webtagcontent=document.createElement('div');
+				fdiv.appendChild(webtagtitle);
+				fdiv.appendChild(webtagcontent);
+				webtagcreatediv.appendChild(fdiv);
+
+				if(ia==0){
+					webtagtitle.innerHTML='webpage url';
+					var webtagcontentinput=document.createElement('input');
+					webtagcontentinput.type='text';
+					webtagcontentinput.id='webtagurl';
+				}else if(ia==1){
+		
+					webtagtitle.innerHTML='webpage info';
+					var webtagcontentinput=document.createElement('input');
+					webtagcontentinput.type='text';
+					webtagcontentinput.id='webtagcontentinput'
+				}else if(ia==2){
+					webtagtitle.innerHTML=ia;
+					var webtagcontentinput=document.createElement('button');
+					webtagcontentinput.innerHTML='Send';
+					webtagcontentinput.onclick=function(){
+						return function(){
+							createWebtagrow('create');
+						}
+					}()
+
+				}else{
+					webtagtitle.innerHTML=ia;
+				}
+
+				webtagcontent.appendChild(webtagcontentinput);
+			}
+
+
+			function createWebtagrow(opt){
+				if(opt=='create'){
+					var webtagurl=document.getElementById('webtagurl').value;
+					var webtagurlinfo=document.getElementById('webtagcontentinput').value;
+
+					socket.emit('webtagcontrol',{opt:'create',wpurl:webtagurl,wpinfo:webtagurlinfo})
+				}
+			}
+
+			socket.on('webtagcontrolafter',function(a){
+				console.log(a);
+			});
+
+			//url duplication examination need.
+			//

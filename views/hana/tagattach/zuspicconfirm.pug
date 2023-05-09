@@ -1,0 +1,216 @@
+html
+	head
+		script(src='/socket.io/socket.io.js')
+		//script(src='/whalse/whalselib/infoinput.js')
+		style.
+			#displaycontainer {
+				width:50%;
+				height:50%;
+				overflow:auto;
+				background-color:yellow;
+			}
+			.photodiv {
+				width:50%;	
+			}
+
+			#photolist {
+				width:100%;
+				background-color:pink;
+				overflow:auto;
+			}
+			.photolistdiv {
+				width:20%;
+				margin:2% 0;
+				height:50%;
+				float:left;
+			}
+			.imgdiv {
+				width:100%;
+			}
+			.imgdiv img {
+				width:100%;
+			}
+			
+	body
+		p zus pic confirm
+		//div
+			//button(onclick='uploadZusPic("displaycontainer")') Upload
+		div(id='displaycontainer')
+		div(id='displaybutton')
+		div(id='photolist')
+
+		script.
+			var socket = io('/whalse');
+
+			var photolist=!{JSON.stringify(u)};
+			var photolistdiv=document.getElementById('photolist');
+			for(var ia=0; ia<photolist.length; ia++){
+				if(photolist[ia].picoption!='hide'){
+					var fdiv=document.createElement('div');
+					fdiv.id='photolistdiv'+photolist[ia].numid;
+					fdiv.className='photolistdiv'
+					var titlediv=document.createElement('div');
+
+					var oname=document.createElement('a');
+					oname.innerHTML=photolist[ia].originalname;
+			
+					var cdate=document.createElement('a');
+					cdate.innerHTML=photolist[ia].createdate;				
+
+					var hidebutton=document.createElement('button');
+					hidebutton.innerHTML='hide';
+					hidebutton.onclick=function(i){
+						return function(){
+							socket.emit('itemupload',{option:'hide',numid:i})
+						}
+					}(photolist[ia].numid);
+
+
+					titlediv.appendChild(oname)
+					titlediv.appendChild(cdate)
+					titlediv.appendChild(hidebutton)
+
+					var imgdiv=document.createElement('div');
+					imgdiv.className='imgdiv';
+					var fimg=document.createElement('img');
+					fimg.src='/whalse/whalsezusphoto/'+photolist[ia].picassign;
+					imgdiv.appendChild(fimg);
+					
+					fdiv.appendChild(imgdiv);
+					fdiv.appendChild(titlediv);
+
+					photolistdiv.appendChild(fdiv);	
+				}
+
+			}
+
+
+			socket.on('itemuploadafter',function(a){
+				if(a.a.option=='hide'){
+					console.log('removed');
+					document.getElementById('photolistdiv'+a.a.numid).remove();
+				}	
+			});
+
+			uploadZusPic("displaycontainer");
+	
+			function uploadZusPic(bodyname,pinfo){
+				removeallele(bodyname);
+				var uploaddiv=document.createElement('div');
+				uploaddiv.id='erroruploaddiv';
+				uploaddiv.style.width=100+'%';
+				uploaddiv.style.height=100+'%';
+				uploaddiv.style.backgroundColor='#eeeeee';
+
+				var bodydiv=document.getElementById(bodyname);
+
+				var formdiv=document.createElement('div');
+				var formel=document.createElement('form');
+				var form=document.createElement('input');
+				formel.setAttribute('enctype','multipart/form-data');
+				formel.setAttribute('method','post');
+				var formfile=document.createElement('input');
+				formfile.id='formfile';
+				formfile.onchange=function(){loadImage(event);};
+				formfile.setAttribute('type','file');
+				formfile.setAttribute('multiple','multiple');
+
+				var sendbutton=document.createElement('button');
+				sendbutton.innerHTML='send';
+				sendbutton.onclick=function(i){return function(){zussendFile(i)}}([1,1]);
+
+
+				var retrievebutton=document.createElement('button');
+				retrievebutton.innerHTML='BACK'
+				retrievebutton.onclick=function(){return function(){
+					errpiccon=0;
+					document.getElementById('errbodydiv').remove();
+
+				}}();
+
+
+				var photodiv=document.createElement('div');
+				photodiv.className='photodiv';
+				//photodiv.style.width=100+'%';
+				//photodiv.style.height=100*0.617+'%';
+
+
+				bodydiv.appendChild(photodiv);
+
+				
+				formel.appendChild(formfile);
+				formdiv.appendChild(formel);
+				formdiv.appendChild(sendbutton);
+				formdiv.appendChild(retrievebutton);
+
+				document.getElementById('displaybutton').appendChild(formdiv);
+				function loadImage(e){
+					for(var ia=0; ia<e.target.files.length; ia++){
+						var photoimg=document.createElement('img');
+						photoimg.style.width=100+'%';
+						//photoimg.style.height=100+'%';
+						photoimg.src='';
+						photoimg.src=URL.createObjectURL(e.target.files[ia]);
+						
+						photodiv.appendChild(photoimg);
+
+					}
+				}
+
+
+			}
+
+
+			function removeallele(parentid){
+				var parent=document.getElementById(parentid);
+				while(parent.firstChild){
+					parent.firstChild.remove();
+				}
+			}
+
+
+			function zussendFile(pid){
+				var formel=document.getElementById('formfile');
+				var formData=new FormData();
+
+
+				var formfile=formel.files[0];
+				var ext=formfile.name.split('.')[formfile.name.split('.').length-1];
+				var fname='pclistnumid'+'pc'+'zusarrivedphoto'+'_'+Date.now();
+
+				//formData.append(fname,formfile);
+		
+
+				var namelist=[];		
+				for(var ia=0; ia<formel.files.length; ia++){
+					var ext=formel.files[ia].name.split('.')[formel.files[ia].name.split('.').length-1];
+					var fname='zusarrivedphoto_'+ia+'_'+Date.now();
+					namelist.push([formel.files[ia].name,fname,ext]);
+					formData.append(fname,formel.files[ia]);
+				}
+				formData.append('pc',pid[0]);
+				formData.append('pclistnumid',pid[1]);
+				//formData.append('fname',fname);
+				var xhr = new XMLHttpRequest();
+				xhr.open('post','/whalsezusarrivedphotoupload',true);
+				xhr.send(formData);
+
+				//xhr.addEventListener('load',console.log('go'));
+				xhr.addEventListener('load',afterZusUpload(pid,namelist));
+			}
+
+
+			function afterZusUpload(pid,fname){
+
+				//document.getElementById('errbodydiv').remove();
+				function wsend(){
+					socket.emit('zusarrivedcontent',{content:fname,mode:'zusarrived'});
+				}
+
+				setTimeout(wsend,2000);
+
+				
+			}
+
+
+

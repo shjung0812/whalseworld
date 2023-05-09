@@ -1,0 +1,195 @@
+html
+	head
+		script(src='/socket.io/socket.io.js')
+		script(src='/jsfile/itemclickingfunctions.js')
+		script(src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.3/xlsx.full.min.js")
+		script(src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js")
+		style.
+			.dw {
+				display:inline-block;
+				margin:0 5%;
+			}
+			.madaechk {
+				float:left;
+			}
+			.drawerdiv {
+				width:10%;
+				float:left;
+		
+			}
+			#madaeinfo {
+				background-color:green;
+			}
+			#availabletagdiv {
+				width:95%;
+				border:1px solid black;
+				overflow:auto;
+			}
+			.coldiv {
+				float:left;
+				width:20%;
+			}
+			.titlediv {
+				width:100%;
+				background-color:green;
+				color:white;
+			}
+			#madaelist {
+				width:100%;
+				overflow:auto;
+			}
+			.madaeind {
+				width:30%;
+				float:left;	
+				text-align:center;
+			}
+			#sendboxdiv {
+				width:100%;
+				background-color:yellow;
+			}
+	
+			
+
+	body
+
+		div(id='madaelist')
+		div(id='sendboxdiv')
+			button(onclick='connectMadaeTag();') Send
+		script.
+			var socket = io('/whalse');
+
+			var chosentag=!{JSON.stringify(tag)}[0].numid;
+
+			var availabletagdiv=document.getElementById('availabletagdiv');
+
+
+			function connectMadaeTag(){
+				var madaechk=document.getElementsByClassName('madaechk');
+				if(chosentag!=''){
+					socket.emit('madaetagprocessing',{madaelist:chosenlist,tagnumid:chosentag,option:'zssimpleinsert'})
+				}else{
+					alert('got problem');
+				}
+			}
+
+
+			/*
+			var titlelist=['numid','tagname','tagnote','taginfo']
+			for(var ia=0; ia<titlelist.length; ia++){
+				var cdiv=document.createElement('div');
+				cdiv.className='coldiv';
+
+				var fdiv=document.createElement('div');
+				fdiv.className='titlediv';
+				fdiv.innerHTML=titlelist[ia];
+				cdiv.appendChild(fdiv);
+				
+				availabletagdiv.appendChild(cdiv);
+
+			}*/			
+
+
+			/*
+			for(var ib=0; ib<tag.length; ib++){
+			for(var ia=0; ia<titlelist.length; ia++){
+
+				var fdiv=document.getElementsByClassName('coldiv')
+
+
+
+				var cfdiv=document.createElement('div');
+				cfdiv.className='cfdiv';
+				cfdiv.innerHTML=tag[ib][titlelist[ia]];
+				cfdiv.onclick=function(k){
+					return function(){
+						chosentag=k
+					}
+				}(tag[ib].numid);
+				fdiv[ia].appendChild(cfdiv);
+
+			}
+			}*/
+
+
+			function removeallele(parentid){
+				var parent=document.getElementById(parentid);
+				while(parent.firstChild){
+					parent.firstChild.remove();
+				}
+			}
+
+
+			var madaedata=!{JSON.stringify(a)};
+			var indmadae=[];
+			for(var ia=0; ia<madaedata.length; ia++){
+				var chk=0;
+				for(var ib=0; ib<indmadae.length; ib++){
+					if(indmadae[ib]==madaedata[ia].madaename){
+						chk=1;
+						break;
+					}
+				}
+				if(chk==0){
+					indmadae.push(madaedata[ia].madaename)
+				}
+			}
+
+
+			var chosenlist=[];
+			var madaelist=document.getElementById('madaelist');
+			console.log(madaedata);
+
+			var madaeinfolist=[];
+			for(var ib=0; ib<indmadae.length; ib++){
+				madaeinfolist.push([indmadae[ib],[]])
+			for(var ia=0; ia<madaedata.length; ia++){
+				if(madaedata[ia].madaename==indmadae[ib]){
+					madaeinfolist[madaeinfolist.length-1][1].push(madaedata[ia].w_orderday.split('_')[0]);
+				}
+			}
+			}
+			for(var ib=0; ib<madaeinfolist.length; ib++){
+				var sdiv=document.createElement('div');
+
+				var releasepointdiv=document.createElement('div');
+				releasepointdiv.innerHTML=madaeinfolist[ib][1][0];
+
+				var datediv=document.createElement('div');
+				datediv.innerHTML=madaeinfolist[ib][0].split('-')[0][2]+madaeinfolist[ib][0].split('-')[0][3]+'월 '+madaeinfolist[ib][0][4]+madaeinfolist[ib][0][5]+'일';
+		
+				var markingnumdiv=document.createElement('div');
+				markingnumdiv.innerHTML='마킹'+madaeinfolist[ib][0].split('-')[1];
+
+				sdiv.appendChild(releasepointdiv);
+				sdiv.appendChild(datediv);
+				sdiv.appendChild(markingnumdiv);
+
+				sdiv.id=madaeinfolist[ib][0];
+
+				sdiv.onclick=function(i){
+					return function(){
+						clickToChosen(i,'madaeind');		
+					}
+				}(madaeinfolist[ib][0]);
+
+				sdiv.className='madaeind'
+
+				/*
+				var sdivcheck=document.createElement('input');	
+				sdivcheck.setAttribute('data-madaename',indmadae[ib]);
+				sdivcheck.type='checkbox';
+				sdivcheck.className='madaechk';
+				sdivcheck.id='madaechk'+ib;
+				sdiv.appendChild(sdivcheck);
+
+				var madaediv=document.createElement('div');
+
+				madaediv.innerHTML=indmadae[ib];
+				sdiv.appendChild(madaediv);*/
+				madaelist.appendChild(sdiv);
+			}
+
+
+
+
+

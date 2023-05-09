@@ -1,0 +1,172 @@
+html
+	head
+		script(src='/socket.io/socket.io.js')
+		style.
+			#tagcreatediv {
+				width:100%;
+				height:30%;
+			}
+			.tagcolumn {
+				border:1px solid black;
+				float:left;
+				width:18%;
+				
+			}
+			#webpageorderfreediv {
+				overflow:auto;
+				border:1px solid black;
+			}
+			.freefdiv {
+				overflow:auto;
+				
+			}
+			.wpofdcontainer {
+				width:20%;
+				float:left;
+			}
+			.titlebar {
+				background-color:green;
+				overflow:auto;
+			}
+			.titlebar div {
+				width:20%;
+				float:left;
+				color:white;
+			}
+
+	body
+		p tagList Definition
+		div(id='tagcreatediv')
+		div(id='webpageorderdiv')
+		div(id='webpageorderfreediv')
+			
+		script.
+
+			var socket = io('/whalse');
+			var wpd=!{JSON.stringify(wpd)}
+			console.log(wpd);
+
+	
+
+			var tagcreatediv=document.getElementById('tagcreatediv');
+			var wpod=document.getElementById('webpageorderdiv');
+			var wpofd=document.getElementById('webpageorderfreediv');
+
+
+
+			//title bar insert
+			var contentlist=['tagname','tagnote','taginfo']
+			var titlebardiv_order=document.createElement('div');
+			titlebardiv_order.className='titlebar';
+			var titlebardiv_free=document.createElement('div');
+			titlebardiv_free.className='titlebar';
+
+			wpofd.appendChild(titlebardiv_order);
+
+			for(var ia=0; ia<wpd.length; ia++){
+				var fdiv=document.createElement('div');
+				fdiv.className='freefdiv';
+
+				for(var ib=0; ib<contentlist.length+2; ib++){
+					var sdiv=document.createElement('div');
+					sdiv.className='wpofdcontainer';
+
+					if(ib==0){
+						sdiv.innerHTML=wpd[ia].numid;
+						fdiv.appendChild(sdiv);
+
+						var kdiv=document.createElement('div');
+						kdiv.innerHTML='numid';
+						titlebardiv_order.appendChild(kdiv);
+
+
+					}else if(ib==1){
+						sdiv.innerHTML=wpd[ia].tagname;
+						fdiv.appendChild(sdiv);
+
+						var kdiv=document.createElement('div');
+						kdiv.innerHTML='tagname';
+						titlebardiv_order.appendChild(kdiv);
+
+					}else if(ib==2){
+						sdiv.innerHTML=wpd[ia].tagnote;
+						fdiv.appendChild(sdiv);
+
+						var kdiv=document.createElement('div');
+						kdiv.innerHTML='tagnote';
+						titlebardiv_order.appendChild(kdiv);
+
+					}else if(ib==3){
+						sdiv.innerHTML=wpd[ia].taginfo;
+						fdiv.appendChild(sdiv);
+
+						var kdiv=document.createElement('div');
+						kdiv.innerHTML='taginfo';
+						titlebardiv_order.appendChild(kdiv);
+
+
+					}else if(ib==4){
+						sdiv.innerHTML=wpd[ia].tagoption;
+						fdiv.appendChild(sdiv);
+
+						var kdiv=document.createElement('div');
+						kdiv.innerHTML='tagoption';
+						titlebardiv_order.appendChild(kdiv);
+					}
+				}
+				wpofd.appendChild(fdiv);
+
+			}
+			
+			for(var ia=0; ia<contentlist.length+1; ia++){
+				var fdiv=document.createElement('div');
+				fdiv.className='tagcolumn';
+				var tagtitle=document.createElement('div');
+				var tagcontent=document.createElement('div');
+				fdiv.appendChild(tagtitle);
+				fdiv.appendChild(tagcontent);
+				tagcreatediv.appendChild(fdiv);
+
+				if(ia < contentlist.length){
+					tagtitle.innerHTML=contentlist[ia];
+					var tagcontentinput=document.createElement('input');
+					tagcontentinput.type='text';
+					tagcontentinput.id=contentlist[ia]+'input';
+
+
+				}else if(ia==contentlist.length){
+					tagtitle.innerHTML=ia;
+					var tagcontentinput=document.createElement('button');
+					tagcontentinput.innerHTML='Send';
+					tagcontentinput.onclick=function(){
+						return function(){
+							createTagrow('create');
+						}
+					}()
+
+				}else{
+					tagtitle.innerHTML=ia;
+				}
+
+				tagcontent.appendChild(tagcontentinput);
+			}
+
+
+			function createTagrow(opt){
+				if(opt=='create'){
+					var taginfo=[];
+					for(var ia=0; ia<contentlist.length; ia++){
+						taginfo.push(document.getElementById(contentlist[ia]+'input').value);
+						
+					}
+
+					socket.emit('tagmanagement',{opt:'create',taginfo:taginfo})
+				}
+			}
+
+			socket.on('tagmanagementafter',function(a){
+				console.log(a);
+			});
+
+			//url duplication examination need.
+			//

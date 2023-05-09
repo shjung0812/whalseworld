@@ -1,0 +1,81 @@
+html
+	head
+		title Superior function
+		style.
+			#errorboard {
+				overflow:auto;
+			}
+			.errlistdiv {
+				width:90%;
+				height:15%;
+				margin:2% 0;
+				overflow:auto;
+				border:1px solid black;
+			}
+			.errpicdiv {
+				width:25%;
+				height:100%;
+				float:left;
+				overflow:auto;
+				display:inline-block;
+				
+			}
+			.errpicdiv img {
+				width:100%;
+				height:100%;
+				object-fit:contain;
+			}
+			.errmsgdiv {
+				width:25%;
+				height:100%;
+				float:left;
+				overflow:auto;
+				display:inline-block;
+
+			}
+			.cdate, .pclistnumid, .errpicdiv, .errmsgdiv {
+				width:23%;
+				height:100%;
+				float:left;
+				overflow:auto;
+				display:inline-block;
+
+			}
+	body
+		div(id='errorboard')
+		script.
+			var errlist = !{JSON.stringify(err)}
+			console.log(errlist);
+			var errorboard=document.getElementById('errorboard');
+			for(var ia=0; ia<errlist.length; ia++){
+				var fdiv=document.createElement('div');
+				fdiv.className='errlistdiv'
+				var errpicdiv=document.createElement('div');
+				errpicdiv.className='errpicdiv';
+				if(errlist[ia].errorpic!=null){
+					var qel=document.createElement('img');
+					qel.src='/whalse/whalseerrorphoto/'+errlist[ia].errorpic;
+					errpicdiv.appendChild(qel);
+				}else{
+				}
+				var errmsgdiv=document.createElement('div');
+				errmsgdiv.className='errmsgdiv'
+				errmsgdiv.innerHTML=errlist[ia].errormsg;
+
+
+				var cdate=document.createElement('div');
+				cdate.innerHTML=errlist[ia].createdate;
+				cdate.className='cdate';
+
+				var pclistnumid=document.createElement('div');
+				pclistnumid.innerHTML=errlist[ia].pclistnumid;
+				pclistnumid.cassName='pclistnumid';
+
+				fdiv.appendChild(errpicdiv);
+				fdiv.appendChild(errmsgdiv);
+				fdiv.appendChild(cdate);
+				fdiv.appendChild(pclistnumid);
+
+				errorboard.appendChild(fdiv);
+			}
+		

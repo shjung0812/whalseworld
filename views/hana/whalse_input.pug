@@ -1,0 +1,15 @@
+html
+	
+	head
+		meta(charset='utf-8')
+		title My Upload
+	body
+		h1 Whalse input File
+		form(action='/whalse_uploadfile' enctype='multipart/form-data' method='post' accept-charset='UTF-8')
+			input(type='file' name='whalse_data')
+			input(type='text', value='/hana/whalse/input',name='pageaddr' , hidden)
+			input(type='submit' value='Upload a file')
+		script.
+			
+
+
