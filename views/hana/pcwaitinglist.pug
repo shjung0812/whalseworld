@@ -11,12 +11,17 @@ html
 				overflow:auto;
 			}
 			.conA1 {
-				//jung
-				width:90%;
+				//width:90%;
 				//height:15%;
-				margin:2% 0;
+				//margin:2% 0;
 				overflow:auto;
 				border:1px solid black;
+			}
+			.cimg {
+				width:100%;
+				height:100%;
+				object-fit:contain;
+
 			}
 			.conB1 {
 				width:100%;
@@ -115,6 +120,10 @@ html
 				height:100%;
 				object-fit:contain;
 			}
+			.col4 {
+				border:1px solid black;
+				margin:2% 1%;
+			}
 
 
 	body
@@ -138,12 +147,6 @@ html
 				transports:['websocket'],
 				upgrade:false
 			});
-
-
-
-		
-
-
 
 			//common information gethering. order: 'registereddate,roundnum,branchoffice,status'
 			socket.emit('errorboard',{option:'call'});
@@ -173,7 +176,7 @@ html
 					for(var ib=0; ib<indslot.length; ib++){
 						var conA1=document.createElement('div');
 						//conA1.className='conA1'
-						conA1.className='conA1 container'
+						conA1.className='container conA1'
 						
 						var relatederr=[];
 						var pcode=[];
@@ -184,10 +187,6 @@ html
 						var title_basic_info_div=document.createElement('div');
 						title_basic_info_div.className='container text-center'
 						//title_basic_info_div.className='card'
-
-
-
-						
 
 
 						var basic_title_div=document.createElement('div')
@@ -248,9 +247,10 @@ html
 						conA1.appendChild(title_basic_info_div)
 					for(var ia=0; ia<errlist.length; ia++){
 						if(indslot[ib][0]==errlist[ia].registereddate && indslot[ib][1]==errlist[ia].roundnum && indslot[ib][2]==errlist[ia].branchoffice && errlist[ia].transform=='ini'){
+							contentBox(conA1,errlist[ia])
 						
-							var conB1=document.createElement('div');	
-							conB1.className='conB1';
+							/*
+							
 							var conC1=document.createElement('div');
 							conC1.className='conC1';
 							conB1.appendChild(conC1);
@@ -264,12 +264,9 @@ html
 							conE1D1.innerHTML='송장수';
 							conE2D1.innerHTML=errlist[ia].registernum;
 		
-							var conD2=document.createElement('div');
-							var conD3=document.createElement('div');
+							
 							var conD4=document.createElement('div');
 							conD1.className='conD1';
-							conD2.className='conD2';
-							conD3.className='conD3';
 							conD4.className='conD4';
 							
 							if(errlist[ia].errorpic!=null){
@@ -280,9 +277,9 @@ html
 							}
 
 							conC1.appendChild(conD1);
-							conC1.appendChild(conD2);
-							conC1.appendChild(conD3);
 							conC1.appendChild(conD4);
+
+
 
 						
 							var errmsgdiv=document.createElement('div');
@@ -351,8 +348,8 @@ html
 
 
 
-
-							conA1.appendChild(conB1);
+							*/
+						
 
 							relatederr.push(errlist[ia].numid);
 							pcode.push(errlist[ia].errparcelcode);
@@ -361,8 +358,119 @@ html
 
 
 					} // End: for(var ia=0; ia<errlist.length; ia++){
+						complteButton(a,pcode, relatederr,conA1, errorboard)
+					}
+				}else if(a.option=='complete' || a.option=='remove'){ //Middle: if(a.option=='call'){
+					alert(a.option);
+					location.reload();
+				}//End: if(a.option=='call'){
+			
+			});
+			function contentBox(conA1, e){
+					var conB1=document.createElement('div');	
+					conB1.className='container text-center';
 
 
+					var row=document.createElement('div');
+					row.className='row'
+
+
+					var col1=document.createElement('div');
+					col1.className='col-md-2 col4';
+					col1.innerHTML='1'
+
+					var col2=document.createElement('div');
+					col2.className='col-md-4 col4';
+
+						var inforow=document.createElement('div');
+						inforow.className='d-flex-row mb-3'
+
+						info1=document.createElement('div')
+						info1.className='p-2 row';
+
+							drawer1=document.createElement('div');
+							drawer1.className='col';
+							drawer1.innerHTML='대기송장순서';
+							drawer2=document.createElement('div');
+							drawer2.className='col';
+							info1.appendChild(drawer1);
+							info1.appendChild(drawer2);
+
+
+						info2=document.createElement('div')
+						info2.className='p-2 row';
+
+							adrawer1=document.createElement('div');
+							adrawer1.className='col';
+							adrawer1.innerHTML='송장번호';
+							adrawer2=document.createElement('div');
+							adrawer2.className='col';
+							adrawer2.innerHTML='222';
+							info2.appendChild(adrawer1);
+							info2.appendChild(adrawer2);
+
+
+						info3=document.createElement('div')
+						info3.className='p-2 row';
+							bdrawer1=document.createElement('div');
+							bdrawer1.className='col';
+							bdrawer1.innerHTML='송장사진';
+							bdrawer2=document.createElement('div');
+							bdrawer2.className='col';
+							bdrawer2.innerHTML='';
+
+							
+							info3.appendChild(bdrawer1);
+							info3.appendChild(bdrawer2);
+							
+
+						info4=document.createElement('div')
+						info4.className='p-2';
+							cdrawer1=document.createElement('figure');
+							cdrawer1.className='figure';
+							
+							
+							if(e.errorpic!=null){
+								var cimg=document.createElement('img');
+								cimg.className='figure-img img-fluid rounded'
+								cimg.src='/whalse/whalsewaiting/'+e.errorpic;
+								cdrawer1.appendChild(cimg);
+							}else{
+							}
+							info4.appendChild(cdrawer1);
+
+
+
+
+
+						inforow.appendChild(info1)
+						inforow.appendChild(info2)
+						inforow.appendChild(info3)
+						inforow.appendChild(info4)
+
+					col2.appendChild(inforow);
+
+					
+					var col3=document.createElement('div');
+					col3.className='col-md-2 col4';
+					col3.innerHTML='1'
+					var col4=document.createElement('div');
+					col4.className='col-md-2 col4';
+					col4.innerHTML='5'
+					row.appendChild(col1);
+
+					row.appendChild(col2);
+					row.appendChild(col3);
+					row.appendChild(col4);
+
+					conB1.appendChild(row);
+
+
+					conA1.appendChild(conB1);
+							
+
+			}
+			function complteButton(a,pcode,relatederr,conA1,errorboard){
 						var chk0=1;
 						for(var ic=0; ic<pcode.length; ic++){
 							var chk1=0;
@@ -426,14 +534,7 @@ html
 						
 
 						errorboard.appendChild(conA1);
-
-					}
-				}else if(a.option=='complete' || a.option=='remove'){ //Middle: if(a.option=='call'){
-					alert(a.option);
-					location.reload();
-				}//End: if(a.option=='call'){
-			
-			});
+			}
 		//script(src="/bootstrap/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous")
 		script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous")
 		script(src='/jsfile/pcwaiting_list_func.js')
