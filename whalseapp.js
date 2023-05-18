@@ -768,7 +768,8 @@ app.get('/whalse/pcwaitinglist',function(req,res){
 		//res.render('hana/pcwaitinglist',{pcl:a});
 	//});
 
-		res.render('hana/pcwaitinglist');
+		res.render('view_pcwaiting');
+		//res.render('hana/pcwaitinglist');
 
 
 });
