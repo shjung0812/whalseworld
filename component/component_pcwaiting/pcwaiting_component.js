@@ -1,13 +1,22 @@
-
-import {PcGroupController} from '/controller/controller_pcwaiting/pcwaiting_controller.js'
 class PcGroup {
     constructor() {
-        const testdiv=document.createElement('div');
-        testdiv.innerHTML=PcGroupController.datavalue.length;
-        document.body.appendChild(testdiv)
+        const script=document.createElement('script');
+        script.src="/controller/controller_pcwaiting/pcwaiting_controller.js"
+        script.type='module'
+        document.body.appendChild(script)
+        
     
 
     };
+
+    init(){
+        const testdiv=document.createElement('div');
+        testdiv.innerHTML=''
+        ///testdiv.innerHTML=PcGroupController.datavalue.length;
+        document.body.appendChild(testdiv)
+
+    }
 };
 
-new PcGroup();
+const pgroup=new PcGroup();
+pgroup.init();
