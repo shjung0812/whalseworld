@@ -66,6 +66,7 @@ app.use(express.static(__dirname + '/public'));
 
 app.use('/controller',express.static(__dirname+"/controller"));
 app.use('/model',express.static(__dirname+"/model"));
+app.use('/assets',express.static(__dirname+"/assets"));
 app.use('/bootstrap',express.static(__dirname+"/node_modules/bootstrap/dist/"));
 
 var bodyParser = require('body-parser')
