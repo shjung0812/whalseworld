@@ -1,11 +1,7 @@
 #errorboard {
 	overflow:auto;
 }
-.conA1 {
-	//width:90%;
-	//height:15%;
-	//margin:2% 0;
-	overflow:auto;
+.conA1 {	overflow:auto;
 	border:1px solid black;
 }
 .cimg {
@@ -68,8 +64,7 @@
 
 }
 .completediv:hover{	
-	//background-color:purple;
-	//color:white;
+	
 }
 .completediv {
 	width:10%;
@@ -99,12 +94,12 @@
 .conE1D1{
 	width:48%;
 	float:left;
-	//border:1px solid black;
+
 }
 .conE2D1 {
 	width:48%;
 	float:left;
-	//border:1px solid black;
+
 }
 .conD4 img {
 	width:100%;
