@@ -1,21 +1,28 @@
 import { PcGroupController } from "/controller/controller_pcwaiting/pcwaiting_controller.js";
-//import { PcGroupController } from './pcwaiting_controller.js';
 class PcGroup {
-    constructor() {
-              
-    
-
+    constructor() {  
+        this.boxA();
+        this._indslot=null
+        
     };
 
-    init(){
+    async boxA(){
+        this._indslot = new PcGroupController()
+        
+        const indslotData= await this._indslot.indslotDataController();
+        console.log(indslotData)
+
+        for(var ia=0; ia<indslotData.length; ia++){
+            console.log(indslotData[ia])
+        }
+
         const testdiv=document.createElement('div');
-        //testdiv.innerHTML='hannnnmaum'
-        const p=new PcGroupController
-        testdiv.innerHTML=p.datavalue.length;
+        testdiv.innerHTML='hannnnmaum'
+        
+        //testdiv.innerHTML=p.datavalue.length;
         document.body.appendChild(testdiv)
 
-    }
+    }s
 };
 
 const pgroup=new PcGroup();
-pgroup.init();
