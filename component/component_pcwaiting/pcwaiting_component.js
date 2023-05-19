@@ -11,7 +11,7 @@ class PcGroup {
 
     init(){
         const testdiv=document.createElement('div');
-        testdiv.innerHTML=''
+        testdiv.innerHTML='hannnnmaum'
         ///testdiv.innerHTML=PcGroupController.datavalue.length;
         document.body.appendChild(testdiv)
 
