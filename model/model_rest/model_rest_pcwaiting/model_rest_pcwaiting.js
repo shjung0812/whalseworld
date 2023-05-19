@@ -1,12 +1,13 @@
-import socketIO from 'socket.io';
+//import { io } from 'socket.io-client';
 export class GetErrorDatafunction {
     
     constructor() {
-        //this.io = socketIO();
+        //this.io = socketIO('/');
+        console.log(io('/whalse'))
     }
     
     test(){
-        return socketIO();
+        return io('/whalse')
     }
 };
 

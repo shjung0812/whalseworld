@@ -2,8 +2,8 @@ import {GetErrorDatafunction} from '/model/model_rest/model_rest_pcwaiting/model
 export class PcGroupController {
     constructor(){
         //this.datavalue=GetErrorDatafunction();
-        this.datavalue=''
-        //const errorDataFunction = GetErrorDatafunction();
+        this.datavalue='ddd'
+        const errorDataFunction = new GetErrorDatafunction();
     }
 }
 
