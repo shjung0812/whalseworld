@@ -7,8 +7,8 @@ export class PcGroupController {
     
     }
 
-    indslotDataController(){
-        return this.errorData.indSlot();
+    async indslotDataController(){
+        return await this.errorData.indSlot();
     }
 }
 

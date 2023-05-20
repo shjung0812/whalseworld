@@ -1,4 +1,5 @@
 import { PcGroupController } from "/controller/controller_pcwaiting/pcwaiting_controller.js";
+//import { PcGroupController } from "/controller/controller_pcwaiting/pcwaiting_controller.js";
 class PcGroup {
     constructor() {  
         this.boxA();
@@ -10,19 +11,27 @@ class PcGroup {
         this._indslot = new PcGroupController()
         
         const indslotData= await this._indslot.indslotDataController();
-        console.log(indslotData)
-
+    
+        
+		var errorboard=document.getElementById('errorboard');
+		this.removeallele('errorboard');
         for(var ia=0; ia<indslotData.length; ia++){
-            console.log(indslotData[ia])
+                var conA1=document.createElement('div');
+                conA1.className='container conA1'
+                
+                errorboard.appendChild(conA1);
         }
 
-        const testdiv=document.createElement('div');
-        testdiv.innerHTML='hannnnmaum'
-        
-        //testdiv.innerHTML=p.datavalue.length;
-        document.body.appendChild(testdiv)
 
-    }s
+    }
+
+    
+    removeallele(parentid){
+        var parent=document.getElementById(parentid);
+        while(parent.firstChild){
+            parent.firstChild.remove();
+        }
+    }
 };
 
 const pgroup=new PcGroup();
