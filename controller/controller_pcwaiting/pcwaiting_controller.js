@@ -10,6 +10,9 @@ export class PcGroupController {
     async indslotDataController(){
         return await this.errorData.indSlot();
     }
+    async errListController(){
+        return await this.errorData.errList();
+    }
 }
 
 

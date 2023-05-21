@@ -4,10 +4,14 @@ export class GetErrorDatafunction {
     constructor() {
         this.socket = io('/whalse');
         this.responsed=null;
+        
 
     
     }
     
+    async errList(){
+        return this.responsed.err;
+    }
     async indSlot(){
         this.responsed = await this.requestData();
         const response = this.responsed.err;
