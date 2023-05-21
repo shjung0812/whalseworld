@@ -9,7 +9,12 @@ export class GetErrorDatafunction {
     
     }
     
+    async backdata(){
+        
+        return this.responsed.a;
+    }
     async errList(){
+    
         return this.responsed.err;
     }
     async indSlot(){

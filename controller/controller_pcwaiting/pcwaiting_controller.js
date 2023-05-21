@@ -13,6 +13,9 @@ export class PcGroupController {
     async errListController(){
         return await this.errorData.errList();
     }
+    async backdataController(){
+        return await this.errorData.backdata();
+    }
 }
 
 

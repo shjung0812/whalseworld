@@ -5,6 +5,7 @@ class PcGroup {
         
         this._pcwaiting=null;
         this._errorlist=null;
+        this._backdata=null;
         this.boxA();
     };
 
@@ -12,26 +13,117 @@ class PcGroup {
         this._pcwaiting = new PcGroupController()     
         const indslotData= await this._pcwaiting.indslotDataController();
         this._errorlist = await this._pcwaiting.errListController();
+        this._backdata = await this._pcwaiting.backdataController();
+        
 		var errorboard=document.getElementById('errorboard');
 		this.removeallele('errorboard');
         for(var ia=0; ia<indslotData.length; ia++){
                 var conA1=document.createElement('div');
                 conA1.className='container conA1';
                 this.titleBasicInfo(conA1);
-                console.log(this._errorlist)
                 for(var ib=0; ib<this._errorlist.length;ib++){
                     if(indslotData[ia][0]==this._errorlist[ib].registereddate && indslotData[ia][1]==this._errorlist[ib].roundnum && indslotData[ia][2]==this._errorlist[ib].branchoffice && this._errorlist[ib].transform=='ini'){
-                        this.contentBox(conA1,this._errorlist[ib]);
+                        this.contentBox(conA1,this._errorlist[ib],ib);
                     }
                 }
                 
                 errorboard.appendChild(conA1);
+
+                
         }
 
 
     }
-    contentBox(conA1,e){
-        
+    contentBoxCol1(col1, num){
+        const conB=document.createElement('div');
+        conB.className='container text-center';
+        conB.id='col1button'
+
+        const buttonB=document.createElement('button')
+        buttonB.type='button';
+        buttonB.className='btn btn-primary';
+
+        const spanB=document.createElement('span')
+        spanB.innerHTML=num;
+
+        buttonB.appendChild(spanB);
+
+        conB.appendChild(buttonB)
+        col1.appendChild(conB);
+    }
+    contentBoxCol3(col3, e){
+        const row1=document.createElement('div')
+        row1.className='col-12';
+        const row2=document.createElement('div')
+        row2.className='col-12';
+        const row3=document.createElement('div')
+        row3.className='col-12';
+        console.log(e)
+        col3.appendChild(row1)
+
+            var ordersearchinput=document.createElement('input');
+            ordersearchinput.placeholder='발주코드입력';
+            ordersearchinput.id='ordersearchinput'+e.numid;
+            row1.appendChild(ordersearchinput)
+
+
+        col3.appendChild(row2)
+
+            var dummyinput=document.createElement('input');
+            dummyinput.id='dummycountdiv'+e.numid;
+            dummyinput.placeholder='송장의 수량입력';
+            row2.appendChild(dummyinput);
+
+
+        col3.appendChild(row3)
+
+            var schbuttondiv=document.createElement('div')
+            schbuttondiv.className='row col-12 justify-content-end';
+            var schbutton=document.createElement('button');
+            schbutton.className='col-4'
+            schbuttondiv.appendChild(schbutton)
+            col3.appendChild(schbuttondiv);
+            schbutton.innerHTML='Search';
+            
+            
+            schbutton.onclick=()=>{
+                const k=e.numid;
+                this.searchByOrderday(k);
+                
+            };
+
+
+        /*
+        var pcinputdiv=document.createElement('div');
+        pcinputdiv.className='pcinputdiv';
+        var containerdiv1=document.createElement('div');
+        pcinputdiv.appendChild(containerdiv1);
+
+        var ordersearchinput=document.createElement('input');
+        ordersearchinput.id='ordersearchinput'+errlist[ia].numid;
+        containerdiv1.appendChild(ordersearchinput);
+
+        var containerdiv2=document.createElement('div');
+        containerdiv2.id='containerdiv2'+errlist[ia].numid;
+        containerdiv2.className='containerdiv2';
+        pcinputdiv.appendChild(containerdiv2);
+
+
+
+        var schbutton=document.createElement('button');
+        containerdiv1.appendChild(schbutton);
+        schbutton.innerHTML='Search';
+        schbutton.onclick=function(i,j,k){
+            return function(){
+                searchByOrderday(i,j,k)
+            }
+        }(a.a,containerdiv2,errlist[ia].numid);*/
+
+
+
+
+    }
+    contentBox(conA1,e,c){
             var conB1=document.createElement('div');	
             conB1.className='container text-center';
 
@@ -42,7 +134,8 @@ class PcGroup {
 
             var col1=document.createElement('div');
             col1.className='col-md-2 col4';
-            col1.innerHTML='1'
+            this.contentBoxCol1(col1,c+1)
+            
 
             var col2=document.createElement('div');
             col2.className='col-md-4 col4';
@@ -118,7 +211,8 @@ class PcGroup {
             
             var col3=document.createElement('div');
             col3.className='col-md-2 col4';
-            col3.innerHTML='1'
+            this.contentBoxCol3(col3, e)
+
             var col4=document.createElement('div');
             col4.className='col-md-2 col4';
             col4.innerHTML='5'
@@ -207,6 +301,76 @@ class PcGroup {
             parent.firstChild.remove();
         }
     }
+
+    searchByOrderday(numid){
+        const ini = this._backdata;
+        console.log(numid)
+        console.log(ini)
+        //서치가 실행됬을 때 키워드 가져온다. 
+        var keyword=document.getElementById('ordersearchinput'+numid).value;
+    
+        var UgivenNum=document.getElementById('dummycountdiv'+numid).value;
+        
+        removeallele('containerdiv2'+numid);
+        if(keyword!=''){
+            var searchlist=[];
+            var _chkpc=0;
+            for(var ia=0; ia<ini.length; ia++){
+                if(keyword==ini[ia].w_orderday){
+        
+                    var chk=0;
+                    for(var ib=0; ib<searchlist.length; ib++){
+                        if(searchlist[ib]==ini[ia].ordernum){
+                            chk=1;
+                            break;
+                        }
+                    }
+                    if(chk==0){
+                        var sdiv=document.createElement('div');
+                        var sdiva=document.createElement('a');
+                        sdiv.className='ordernumsdiv'
+                        sdiva.innerHTML=ini[ia].ordernum;
+                        
+                        var sbutton=document.createElement('button');	
+                        sbutton.onclick=function(i){
+                            return function(){
+                                window.open("https://trade.1688.com/order/new_step_order_detail.htm?orderId="+i+"&tracelog=20120313bscentertologisticsbuyer&#logisticsTabTitle");
+                            }
+                        }(ini[ia].ordernum);
+                        sbutton.innerHTML='Link';
+    
+    
+                        sdiv.appendChild(sdiva);	
+                        sdiv.appendChild(sbutton);	
+                        fdiv.appendChild(sdiv);	
+                        searchlist.push([ini[ia].ordernum,ini[ia].order_quantity]);
+                    }
+    
+                    if((ini[ia].parcel_code!='') &&(ini[ia].parcel_code!='미출발')){
+                        _chkpc=1;
+                    }
+                }
+            }
+            
+            if(searchlist.length==0){
+                alert('No search Result');
+                checkNumGiven(UgivenNum,searchlist)
+            }else{
+                checkNumGiven(UgivenNum,searchlist)
+                if(_chkpc==0){
+                    alert('해당 주문번호에 송장번호가 하나도 입력되어있지 않습니다. 그대로 진행 하시겠습니까?');
+                }else{
+    
+                }
+    
+            }
+    
+        }else{
+            alert('insert keyword');
+        }
+    }
+    
+
 };
 
 const pgroup=new PcGroup();
