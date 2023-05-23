@@ -14,25 +14,31 @@ class PcGroup {
         const indslotData= await this._pcwaiting.indslotDataController();
         this._errorlist = await this._pcwaiting.errListController();
         this._backdata = await this._pcwaiting.backdataController();
-        
+        console.log(indslotData)
 		var errorboard=document.getElementById('errorboard');
 		this.removeallele('errorboard');
         for(var ia=0; ia<indslotData.length; ia++){
                 var conA1=document.createElement('div');
                 conA1.className='container conA1';
                 this.titleBasicInfo(conA1);
-                for(var ib=0; ib<this._errorlist.length;ib++){
-                    if(indslotData[ia][0]==this._errorlist[ib].registereddate && indslotData[ia][1]==this._errorlist[ib].roundnum && indslotData[ia][2]==this._errorlist[ib].branchoffice && this._errorlist[ib].transform=='ini'){
-                        this.contentBox(conA1,this._errorlist[ib],ib);
+                for(var ib=0; ib<this._errorlist.errdata.length;ib++){
+                    if(indslotData[ia][0]==this._errorlist.errdata[ib].registereddate && indslotData[ia][1]==this._errorlist.errdata[ib].roundnum && indslotData[ia][2]==this._errorlist.errdata[ib].branchoffice && this._errorlist.errdata[ib].transform=='ini'){
+                        this.contentBox(conA1,this._errorlist.errdata[ib],ib);
                     }
                 }
-                
+                this.complteButton(conA1,ia)
                 errorboard.appendChild(conA1);
 
                 
         }
 
 
+    }
+    contentBoxCol4(col4, numid){
+        const ordernumresultdiv=document.createElement('div');
+        ordernumresultdiv.className='';
+        ordernumresultdiv.id='ordernumresultdiv'+numid;
+        col4.appendChild(ordernumresultdiv);
     }
     contentBoxCol1(col1, num){
         const conB=document.createElement('div');
@@ -58,7 +64,6 @@ class PcGroup {
         row2.className='col-12';
         const row3=document.createElement('div')
         row3.className='col-12';
-        console.log(e)
         col3.appendChild(row1)
 
             var ordersearchinput=document.createElement('input');
@@ -124,110 +129,204 @@ class PcGroup {
 
     }
     contentBox(conA1,e,c){
-            var conB1=document.createElement('div');	
-            conB1.className='container text-center';
+        
+        var conB1=document.createElement('div');	
+        conB1.className='container text-center';
 
 
-            var row=document.createElement('div');
-            row.className='row'
+        var row1=document.createElement('div');
+        row1.className='row'
 
 
-            var col1=document.createElement('div');
-            col1.className='col-md-2 col4';
-            this.contentBoxCol1(col1,c+1)
+        var col1=document.createElement('div');
+        col1.className='col-md-2 col4';
+        this.contentBoxCol1(col1,c+1)
+        
+
+        var col2=document.createElement('div');
+        col2.className='col-md-4 col4';
+
+            var inforow=document.createElement('div');
+            inforow.className='d-flex-row mb-3'
+
+            var info1=document.createElement('div')
+            info1.className='p-2 row';
+
+                var drawer1=document.createElement('div');
+                drawer1.className='col';
+                drawer1.innerHTML='대기송장순서';
+                var drawer2=document.createElement('div');
+                drawer2.className='col';
+                drawer2.innerHTML=e.registernum;
+                info1.appendChild(drawer1);
+                info1.appendChild(drawer2);
+
+
+            var info2=document.createElement('div')
+            info2.className='p-2 row';
+
+                var adrawer1=document.createElement('div');
+                adrawer1.className='col';
+                adrawer1.innerHTML='송장번호';
+                var adrawer2=document.createElement('div');
+                adrawer2.className='col';
+                adrawer2.innerHTML=e.errparcelcode;
+                info2.appendChild(adrawer1);
+                info2.appendChild(adrawer2);
+
+
+            var info3=document.createElement('div')
+            info3.className='p-2 row';
+                var bdrawer1=document.createElement('div');
+                bdrawer1.className='col';
+                bdrawer1.innerHTML='송장사진';
+                var bdrawer2=document.createElement('div');
+                bdrawer2.className='col';
+                bdrawer2.innerHTML='';
+
+                
+                info3.appendChild(bdrawer1);
+                info3.appendChild(bdrawer2);
+                
+
+            var info4=document.createElement('div')
+            info4.className='p-2';
+                var cdrawer1=document.createElement('figure');
+                cdrawer1.className='figure';
+                
+                
+                if(e.errorpic!=null){
+                    var cimg=document.createElement('img');
+                    cimg.className='figure-img img-fluid rounded'
+                    cimg.src='/whalse/whalsewaiting/'+e.errorpic;
+                    cdrawer1.appendChild(cimg);
+                }else{
+                }
+                info4.appendChild(cdrawer1);
+
+
+
+
+
+            inforow.appendChild(info1)
+            inforow.appendChild(info2)
+            inforow.appendChild(info3)
+            inforow.appendChild(info4)
+
+        col2.appendChild(inforow);
+
+        
+        var col3=document.createElement('div');
+        col3.className='col-md-2 col4';
+        this.contentBoxCol3(col3, e)
+
+        var col4=document.createElement('div');
+        col4.className='col-md-2 col4';
+        this.contentBoxCol4(col4, e.numid)
+        row1.appendChild(col1);
+
+        row1.appendChild(col2);
+        row1.appendChild(col3);
+        row1.appendChild(col4);
+
+
+
+        var row2=document.createElement('div');
+        row2.className='row'
+
+
+            var col2_1=document.createElement('div');
+            col2_1.className='col-10'
             
 
-            var col2=document.createElement('div');
-            col2.className='col-md-4 col4';
-
-                var inforow=document.createElement('div');
-                inforow.className='d-flex-row mb-3'
-
-                var info1=document.createElement('div')
-                info1.className='p-2 row';
-
-                    var drawer1=document.createElement('div');
-                    drawer1.className='col';
-                    drawer1.innerHTML='대기송장순서';
-                    var drawer2=document.createElement('div');
-                    drawer2.className='col';
-                    info1.appendChild(drawer1);
-                    info1.appendChild(drawer2);
-
-
-                var info2=document.createElement('div')
-                info2.className='p-2 row';
-
-                    var adrawer1=document.createElement('div');
-                    adrawer1.className='col';
-                    adrawer1.innerHTML='송장번호';
-                    var adrawer2=document.createElement('div');
-                    adrawer2.className='col';
-                    adrawer2.innerHTML='222';
-                    info2.appendChild(adrawer1);
-                    info2.appendChild(adrawer2);
-
-
-                var info3=document.createElement('div')
-                info3.className='p-2 row';
-                    var bdrawer1=document.createElement('div');
-                    bdrawer1.className='col';
-                    bdrawer1.innerHTML='송장사진';
-                    var bdrawer2=document.createElement('div');
-                    bdrawer2.className='col';
-                    bdrawer2.innerHTML='';
-
-                    
-                    info3.appendChild(bdrawer1);
-                    info3.appendChild(bdrawer2);
-                    
-
-                var info4=document.createElement('div')
-                info4.className='p-2';
-                    var cdrawer1=document.createElement('figure');
-                    cdrawer1.className='figure';
-                    
-                    
-                    if(e.errorpic!=null){
-                        var cimg=document.createElement('img');
-                        cimg.className='figure-img img-fluid rounded'
-                        cimg.src='/whalse/whalsewaiting/'+e.errorpic;
-                        cdrawer1.appendChild(cimg);
-                    }else{
-                    }
-                    info4.appendChild(cdrawer1);
-
-
-
-
-
-                inforow.appendChild(info1)
-                inforow.appendChild(info2)
-                inforow.appendChild(info3)
-                inforow.appendChild(info4)
-
-            col2.appendChild(inforow);
-
+            var col2_2=document.createElement('div');
+            col2_2.className='col-1'
             
-            var col3=document.createElement('div');
-            col3.className='col-md-2 col4';
-            this.contentBoxCol3(col3, e)
 
-            var col4=document.createElement('div');
-            col4.className='col-md-2 col4';
-            col4.innerHTML='5'
-            row.appendChild(col1);
+            var col2_3=document.createElement('div');
+            col2_3.className='col-1'
+            col2_3.innerHTML='바로출고'
 
-            row.appendChild(col2);
-            row.appendChild(col3);
-            row.appendChild(col4);
+        row2.appendChild(col2_1);
+        row2.appendChild(col2_2);
+        
 
-            conB1.appendChild(row);
+        row2.appendChild(col2_3);
 
 
-            conA1.appendChild(conB1);
+
+        conB1.appendChild(row1);
+        conB1.appendChild(row2);
+        
+
+        conA1.appendChild(conB1);
+        
+        
  
     }
+
+    complteButton(conA1,indslotnum){
+        var chk0=1;
+        for(var ic=0; ic<this._errorlist.pclist[indslotnum].length; ic++){
+            var chk1=0;
+            for(var id=0; id<this._backdata.length; id++){
+                if(this._errorlist.pclist[indslotnum][ic]==this._backdata.parcel_code){
+                    chk1=1;
+                    break;
+                    
+                }
+            }
+            if(chk1==0){
+                chk0=0;
+                break;
+            }
+        }	
+        var completediv=document.createElement('div');
+       // completediv.className='completediv'
+        completediv.innerHTML='완료';
+        conA1.appendChild(completediv);
+
+
+    
+        if(chk0==0){
+            completediv.style.color='red';
+        }else{
+        }
+
+
+        completediv.onclick=function(i,j){
+            return function(){
+                if(j==1){
+                    //socket.emit('errorboard',{option:'complete',errstr:i});	
+                }else{
+                    alert('no parcelcode data');
+                }
+            }
+        }(this._errorlist.relatederr[indslotnum], chk0);
+
+        completediv.addEventListener('mouseover',function(j){
+            return function(){
+                if(j==1){
+                    this.style.backgroundColor='purple';
+                    this.style.color='white';
+                }
+            }
+        }(chk0));
+
+        completediv.addEventListener('mouseout',function(j){
+            return function(){
+                if(j==1){
+                    this.style.backgroundColor='';
+                    this.style.color='black';
+                }
+            }
+
+
+        }(chk0));
+        
+        
+    }
+
 
     titleBasicInfo(conA1){
 
@@ -302,16 +401,45 @@ class PcGroup {
         }
     }
 
+
+    checkNumGiven(UgivenNum,searchlist){
+    
+        var pugivenum=UgivenNum.trim()
+        if(isNaN(pugivenum) || UgivenNum.trim()==''){
+                alert('숫자를 넣으세요.')
+                
+        }else{
+            
+            var order_quantity=0;
+            for(var ia=0; ia<searchlist.length; ia++){
+                if(isNaN(searchlist[ia][1])){
+                    console.log('경고: 백데이터의 order_quantity에 숫자가 아닌 문자가 포함되어 있음. 무시하고 진행함');
+                }else{
+                    order_quantity+=Number(searchlist[ia][1]);
+    
+                }
+                
+            }
+    
+            if(order_quantity==Number(UgivenNum.trim())){
+            }else{
+                alert('수량이 상이합니다. 그대로 진행하시겠습니까?')
+                console.log(order_quantity)
+            }
+        }
+        
+        
+    }
+
     searchByOrderday(numid){
         const ini = this._backdata;
         console.log(numid)
-        console.log(ini)
         //서치가 실행됬을 때 키워드 가져온다. 
         var keyword=document.getElementById('ordersearchinput'+numid).value;
     
         var UgivenNum=document.getElementById('dummycountdiv'+numid).value;
         
-        removeallele('containerdiv2'+numid);
+        this.removeallele('ordernumresultdiv'+numid);
         if(keyword!=''){
             var searchlist=[];
             var _chkpc=0;
@@ -342,7 +470,7 @@ class PcGroup {
     
                         sdiv.appendChild(sdiva);	
                         sdiv.appendChild(sbutton);	
-                        fdiv.appendChild(sdiv);	
+                        document.getElementById('ordernumresultdiv'+numid).appendChild(sdiv);	
                         searchlist.push([ini[ia].ordernum,ini[ia].order_quantity]);
                     }
     
@@ -354,9 +482,9 @@ class PcGroup {
             
             if(searchlist.length==0){
                 alert('No search Result');
-                checkNumGiven(UgivenNum,searchlist)
+                this.checkNumGiven(UgivenNum,searchlist)
             }else{
-                checkNumGiven(UgivenNum,searchlist)
+                this.checkNumGiven(UgivenNum,searchlist)
                 if(_chkpc==0){
                     alert('해당 주문번호에 송장번호가 하나도 입력되어있지 않습니다. 그대로 진행 하시겠습니까?');
                 }else{
