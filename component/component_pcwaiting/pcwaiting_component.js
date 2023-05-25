@@ -240,8 +240,19 @@ class PcGroup {
             
 
             var col2_2=document.createElement('div');
-            col2_2.className='col-1'
+            col2_2.className='col-1 removediv'
             
+            col2_2.innerHTML='remove';
+            
+
+            col2_2.onclick=()=>{
+                
+                this._pcwaiting.removePC_oneController(e.numid).then(()=>{
+                    location.reload();
+                });
+                alert('delete'+e.numid);
+                
+            }
 
             var col2_3=document.createElement('div');
             col2_3.className='col-1'

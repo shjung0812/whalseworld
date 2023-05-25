@@ -7,6 +7,11 @@ export class PcGroupController {
     
     }
 
+    async removePC_oneController(numid){
+        
+        
+        return await this.errorData.removePC_one(numid);
+    }
     async indslotDataController(){
         return await this.errorData.indSlot();
     }

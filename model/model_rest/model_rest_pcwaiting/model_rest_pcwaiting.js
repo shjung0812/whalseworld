@@ -10,6 +10,16 @@ export class GetErrorDatafunction {
     
     }
     
+    async removePC_one(numid){
+        //this.socket.emit('errorboard',{option:'remove',numid:numid});	
+        
+        return new Promise((resolve,reject)=>(
+            
+            this.socket.on('errorboardafter',(data) => (
+                resolve(data)
+            ))
+        ));
+    }
     async backdata(){
         
         return this.responsed.a;
