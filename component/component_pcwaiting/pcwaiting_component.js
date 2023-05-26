@@ -292,10 +292,26 @@ class PcGroup {
                 break;
             }
         }	
+
+
+        var completerow=document.createElement('div');
+        completerow.className='row'
+        
+
+        var col2_1=document.createElement('div');
+        col2_1.className='col-11'
+        
+
+
         var completediv=document.createElement('div');
-       // completediv.className='completediv'
-        completediv.innerHTML='완료';
-        conA1.appendChild(completediv);
+        completediv.className='btn btn-primary col-1'
+        
+        completediv.innerHTML='입력완료';
+
+        completerow.appendChild(col2_1);
+        completerow.appendChild(completediv);
+        
+        conA1.appendChild(completerow);
 
 
     
