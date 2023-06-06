@@ -1612,6 +1612,8 @@ whalse.on('connection',function(socket){
 	});
 	socket.on('whalsegetdata',function(a){
 		
+		
+		if(typeof a.mode == 'undefined'){
 			var sqlstc='';
 			var whalsedata=[]
 			//for(var ia=0; ia<statedata.length; ia++){
@@ -1631,24 +1633,41 @@ whalse.on('connection',function(socket){
 			//sf.whalsegetinfodb('select st.arrival0num, st.arrival1num, st.arrival2num, st.arrival3num,st.status0text,st.status1text, st.status2text,st.status3text,st.status0pic,st.status1pic,st.status2pic,st.status3pic,st.statuscode,ta.numid,ta.invoicenum, ta.ordernum, ta.compnum, ta.ordernum2, ta.documentnum, ta.product, ta.optioncode, ta.chineseproduct, ta.chineseoption, ta.chinesesize, ta.invoicenummatch, ta.timedeparture, ta.departureoption, ta.orderdate, ta. barcodenum, ta.productname, ta.optiondetail, ta.countnum, ta.imageaddr from initialdata as ta left join statusconnect as st on ta.numid=st.initialdataconnect',function(a){
 
 
-		if(typeof a=='undefined'){
-			sf.whalsegetinfodb('select '+sqlstc+' from initialdata',function(a){
-				socket.emit('whalsegetdataafter',{data:a});
-			});
-		}else{
-			var wh='';
-			//var slist=a.selectpclist.split(',');
-			for(var ia=0; ia<a.selectpclist.length; ia++){
-				if(ia == a.selectpclist.length-1){
-					wh+='i.parcel_code="'+a.selectpclist[ia][5]+'"';
-				}else{
-					wh+='i.parcel_code="'+a.selectpclist[ia][5]+'" or ';
+			if(typeof a=='undefined'){
+				sf.whalsegetinfodb('select '+sqlstc+' from initialdata',function(a){
+					socket.emit('whalsegetdataafter',{data:a});
+				});
+			}else{
+				var wh='';
+				//var slist=a.selectpclist.split(',');
+				for(var ia=0; ia<a.selectpclist.length; ia++){
+					if(ia == a.selectpclist.length-1){
+						wh+='i.parcel_code="'+a.selectpclist[ia][5]+'"';
+					}else{
+						wh+='i.parcel_code="'+a.selectpclist[ia][5]+'" or ';
+					}
 				}
-			}
-			sf.whalsegetinfodb('select '+sqlstc+',p.childcol from initialdata as i left join madaeitemconnect as m on i.numid=m.childcol left join madaetagprocessing as p on p.parentcol=m.madaename  where '+wh,function(a){
-				socket.emit('whalsegetdataafter',{data:a});
-			});
+				sf.whalsegetinfodb('select '+sqlstc+',p.childcol from initialdata as i left join madaeitemconnect as m on i.numid=m.childcol left join madaetagprocessing as p on p.parentcol=m.madaename  where '+wh,function(a){
+					socket.emit('whalsegetdataafter',{data:a});
+				});
 
+			}
+		}else if(a.mode=='markingcomplete'){
+			var wh=''
+			for(var ia=0; ia< a.numidlist.length; ia++){
+				if(ia!=a.numidlist.length-1){
+					wh=wh+'(numid="'+a.numidlist[ia]+'") or ';
+				}else{
+					wh=wh+'(numid="'+a.numidlist[ia]+'")';
+					
+				}
+				
+			}
+			console.log(wh)
+			sf.whalsegetinfodb('update processinglist set markingstatus="markingcomplete"  where '+wh,function(a){
+				socket.emit('whalsegetdata_markingcomplete_after');
+			});
+			
 		}
 	});
 

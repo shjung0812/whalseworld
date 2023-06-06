@@ -27,14 +27,12 @@ html
 		var headlist=['현황','스캔차수','송장수', '송장순서','작업버튼','출고날짜','마킹번호','송장순서']
 
 
-
-
 		var pctotal=[];
 
-
+		
 		//arrivaldate, 
 		for(var ia=0;ia<pcl.length; ia++){
-			pctotal.push([pcl[ia].arrivaldate,pcl[ia].roundnum,pcl[ia].branchoffice,'정상',1,pcl[ia].parcelcodelist,new Date(pcl[ia].arrivaldate),pcl[ia].registerseq])
+			pctotal.push([pcl[ia].arrivaldate,pcl[ia].roundnum,pcl[ia].branchoffice,'정상',1,pcl[ia].parcelcodelist,new Date(pcl[ia].arrivaldate),pcl[ia].registerseq,pcl[ia].numid])
 		}
 		for(var ia=0;ia<err.length; ia++){
 			pctotal.push([err[ia].registereddate,err[ia].roundnum,err[ia].branchoffice,'대기',err[ia].transform,'',new Date(err[ia].registereddate),err[ia].registernum])
@@ -117,6 +115,7 @@ html
 			var pclstr='';
 			var pcorder='';
 			var tooutput=[];
+			var numidlist=[];
 			for(var ib=0; ib<pctotal.length; ib++){
 				if(indslot[ia][0]==pctotal[ib][0] && indslot[ia][1]==pctotal[ib][1] && indslot[ia][2]==pctotal[ib][2] && indslot[ia][3]==pctotal[ib][3]){	
 	
@@ -129,24 +128,10 @@ html
 						pclstr+=','+pctotal[ib][5];
 					}
 					tooutput.push(pctotal[ib]);
+					
 					pccount+=1;
 					
 				}
-
-				/*
-				var jpcstatus=JSON.stringify(pcl[ia].parcelcodelist)
-				var gobuttondiv=document.createElement('div');	
-				var gobutton=document.createElement('button');
-				//gobuttondiv.appendChild(gobutton);
-				gobutton.innerHTML='Output';
-				gobutton.onclick=function(s){
-					return function(){
-						console.log(s);
-						window.location='./selectoutput?selectpclist='+s+'&fieldstring='+orderlist[0].orderset;
-					}
-				}(jpcstatus);
-				fdiv.appendChild(gobutton);*/
-
 
 			}
 			pccounta.innerHTML=pccount;
