@@ -2,8 +2,8 @@ html
 	head
 		style.
 			.pcslot a {
-				margin:0 5%;
-				width:7%;
+				margin:0 4%;
+				width:6%;
 				display:inline-block;
 			}
 			.pcslot:hover {
@@ -23,8 +23,9 @@ html
 		var orderlist=!{JSON.stringify(orderlist)};
 		var err=!{JSON.stringify(e)};
 
+		
 
-		var headlist=['현황','스캔차수','송장수', '송장순서','작업버튼','출고날짜','마킹번호','송장순서']
+		var headlist=['현황','스캔차수','송장수', '송장순서','작업버튼','출고날짜','마킹번호','송장순서','마킹상태']
 
 
 		var pctotal=[];
@@ -32,15 +33,17 @@ html
 		
 		//arrivaldate, 
 		for(var ia=0;ia<pcl.length; ia++){
-			pctotal.push([pcl[ia].arrivaldate,pcl[ia].roundnum,pcl[ia].branchoffice,'정상',1,pcl[ia].parcelcodelist,new Date(pcl[ia].arrivaldate),pcl[ia].registerseq,pcl[ia].numid])
+			pctotal.push([pcl[ia].arrivaldate,pcl[ia].roundnum,pcl[ia].branchoffice,'정상',1,pcl[ia].parcelcodelist,new Date(pcl[ia].arrivaldate),pcl[ia].registerseq,pcl[ia].numid,pcl[ia].markingstatus])
 		}
 		for(var ia=0;ia<err.length; ia++){
-			pctotal.push([err[ia].registereddate,err[ia].roundnum,err[ia].branchoffice,'대기',err[ia].transform,'',new Date(err[ia].registereddate),err[ia].registernum])
+			pctotal.push([err[ia].registereddate,err[ia].roundnum,err[ia].branchoffice,'대기',err[ia].transform,'',new Date(err[ia].registereddate),err[ia].registernum,'',''])
 		}
 
 
 		pctotal.sort((a,b) => (a[6]-b[6]))
 		var indslot=[];
+
+		//indslot이란, processinglist에서의 데이터를 독립기준에 따라서 데이터를 분리한다. 
 		for(var ia=0; ia<pctotal.length; ia++){
 			var chk=0;
 			for(var ib=0; ib<indslot.length; ib++){
@@ -50,10 +53,11 @@ html
 				}
 			}
 			if(chk==0){
-				indslot.push([pctotal[ia][0], pctotal[ia][1], pctotal[ia][2], pctotal[ia][3],pctotal[ia][4],pctotal[ia][5]]);
+				indslot.push([pctotal[ia][0], pctotal[ia][1], pctotal[ia][2], pctotal[ia][3],pctotal[ia][4],pctotal[ia][5],pctotal[ia][9]]);
 			}
 		}
-
+		console.log(indslot);
+		console.log(pcl);
 		for(var ia=0; ia<indslot.length; ia++){
 			
 			
@@ -73,6 +77,7 @@ html
 				var pccounta=document.createElement('a');
 				var pcordera=document.createElement('a');
 				var gobutton=document.createElement('a');
+				var markingstatushead=document.createElement('a');
 
 
 
@@ -82,11 +87,13 @@ html
 				pccounta.innerHTML=headlist[2];
 				pcordera.innerHTML=headlist[3];
 				gobutton.innerHTML=headlist[4];
+				markingstatushead.innerHTML=headlist[8];
 				fdiv.appendChild(cstatus);
 				fdiv.appendChild(cdate);
 				fdiv.appendChild(pccounta);
 				fdiv.appendChild(pcordera);
 				fdiv.appendChild(gobutton);
+				fdiv.appendChild(markingstatushead);
 
 				fdiv.style.marginBottom='2%';
 				document.getElementById('output').appendChild(fdiv);
@@ -137,18 +144,34 @@ html
 			pccounta.innerHTML=pccount;
 
 
+			
+			var markingstatus=document.createElement('a');
+			if(tooutput[0][9]=='ini'){
+				markingstatus.innerHTML='마킹준비됨'
+				var ismarkingstatusComplete=false;
+			}else if(tooutput[0][9]=='markingcomplete'){
+				markingstatus.innerHTML='마킹완료'
+				var ismarkingstatusComplete=true;
+			}
+			
 
 			var tooutputstr=JSON.stringify(tooutput)
 
 			if(indslot[ia][4]==1){
 				cstatus.innerHTML='작업대기';
 
-				gobutton.onclick=function(s,k){
-					return function(){
-						window.location='./selectoutput?selectpclist='+s+'&fieldstring='+orderlist[0].orderset+'&tooutputstr='+k;
-					}
-				}(pclstr,tooutputstr);
-				gobutton.innerHTML='GO';
+
+				if(ismarkingstatusComplete){
+					gobutton.innerHTML='Complete';
+				}else{
+					gobutton.onclick=function(s,k){
+						return function(){
+							window.location='./selectoutput?selectpclist='+s+'&fieldstring='+orderlist[0].orderset+'&tooutputstr='+k;
+						}
+					}(pclstr,tooutputstr);
+					gobutton.innerHTML='GO';
+				}
+				
 			}else if(indslot[ia][4]=='ini'){
 				pcordera.innerHTML=pcorder;
 				cstatus.innerHTML='데이터대기';
@@ -174,6 +197,7 @@ html
 			}
 
 
+
 	
 			fdiv.appendChild(cstatus);
 			fdiv.appendChild(cdate);
@@ -182,8 +206,10 @@ html
 			//fdiv.appendChild(pcjudge);
 			fdiv.appendChild(pccounta);
 			fdiv.appendChild(pcordera);
+			
 
 			fdiv.appendChild(gobutton);
+			fdiv.appendChild(markingstatus);
 
 
 			document.getElementById('output').appendChild(fdiv);

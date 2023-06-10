@@ -257,8 +257,8 @@ html
 			}
 			socket.emit('whalsegetdata',{mode:'markingcomplete',numidlist:numidlist})
 		}
-		socket.on('whalsegetdatamarkingcomplete',function(){
-
+		socket.on('whalsegetdata_markingcomplete_after',function(){
+			location.href='./scanstatus'
 		})
 		socket.emit('whalsegetdata',{selectpclist:tooutput});
 		
