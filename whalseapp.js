@@ -1265,6 +1265,48 @@ var whalse=io.of('/whalse');
 whalse.on('connection',function(socket){
 	console.log('vdrg connected');
 
+	socket.on('scanstatus',function(a){
+		console.log(a)
+		if(a.mode=='undo'){
+			console.log(a.pclnumidlist);
+			var wh='';
+			for(var ia=0; ia<a.pclnumidlist.length; ia++){
+				if(ia==a.pclnumidlist.length-1){
+					wh+='numid = "'+a.pclnumidlist[ia]+'";'
+				}else{
+					wh+='numid = "'+a.pclnumidlist[ia]+'" or '
+				}
+			}
+
+		
+			sf.whalsegetinfodb('update processinglist set markingstatus="markingprogressing" where '+wh,function(b){
+					
+				socket.emit('scanstatusafter',{mode:a.mode});
+			});
+		}else if(a.mode=='pclmarkingstatusedit'){
+			var wh='';
+			for(var ia=0; ia<a.pclnumidlist.length; ia++){
+				if(ia==a.pclnumidlist.length-1){
+					wh+='numid = "'+a.pclnumidlist[ia]+'";'
+				}else{
+					wh+='numid = "'+a.pclnumidlist[ia]+'" or '
+				}
+			}
+
+			console.log(a.mode)
+			sf.whalsegetinfodb('update processinglist set markingstatus="markingprogressing" where '+wh,function(b){
+					
+				socket.emit('scanstatusafter',{mode:a.mode});
+			});
+		}else if(a.mode=='tempreset'){
+			sf.whalsegetinfodb('update processinglist set markingstatus="ini"',function(b){
+				socket.emit('scanstatusafter',{mode:a.mode});
+			});
+
+		}
+		//sf.whalsegetinfodb('insert into logendpoint (receivedplace,logcontent,contentopt1,createtime) values ("'+a.receivedplace+'","'+a.logcontent+'","'+a.contentopt1+'","'+sf.nodetime()+'")',function(){
+		//});
+	});
 
 	socket.on('logendpoint',function(a){
 			sf.whalsegetinfodb('insert into logendpoint (receivedplace,logcontent,contentopt1,createtime) values ("'+a.receivedplace+'","'+a.logcontent+'","'+a.contentopt1+'","'+sf.nodetime()+'")',function(){

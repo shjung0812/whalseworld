@@ -13,8 +13,10 @@ html
 			.pcslot {
 				cursor:pointer;
 			}
+		script(src='/socket.io/socket.io.js')
+
 	body
-		h2 스캔 작업현황 (Scan Status)
+		h2(onclick='tempMarkingreset();') 스캔 작업현황 (Scan Status)
 		div(id='output')
 
 		
@@ -22,6 +24,16 @@ html
 		var pcl=!{JSON.stringify(pcl)};
 		var orderlist=!{JSON.stringify(orderlist)};
 		var err=!{JSON.stringify(e)};
+		var socket = io('/whalse',{
+			transports:['websocket'],
+			upgrade:false
+		});
+
+		function tempMarkingreset(){
+			socket.emit('scanstatus',{mode:'tempreset'})
+
+		}
+		console.log(pcl)
 
 		
 
@@ -42,7 +54,7 @@ html
 
 		pctotal.sort((a,b) => (a[6]-b[6]))
 		var indslot=[];
-
+		console.log(pctotal)
 		//indslot이란, processinglist에서의 데이터를 독립기준에 따라서 데이터를 분리한다. 
 		for(var ia=0; ia<pctotal.length; ia++){
 			var chk=0;
@@ -56,8 +68,7 @@ html
 				indslot.push([pctotal[ia][0], pctotal[ia][1], pctotal[ia][2], pctotal[ia][3],pctotal[ia][4],pctotal[ia][5],pctotal[ia][9]]);
 			}
 		}
-		console.log(indslot);
-		console.log(pcl);
+		console.log(indslot)
 		for(var ia=0; ia<indslot.length; ia++){
 			
 			
@@ -122,7 +133,7 @@ html
 			var pclstr='';
 			var pcorder='';
 			var tooutput=[];
-			var numidlist=[];
+			var pclnumidlist=[];
 			for(var ib=0; ib<pctotal.length; ib++){
 				if(indslot[ia][0]==pctotal[ib][0] && indslot[ia][1]==pctotal[ib][1] && indslot[ia][2]==pctotal[ib][2] && indslot[ia][3]==pctotal[ib][3]){	
 	
@@ -135,6 +146,7 @@ html
 						pclstr+=','+pctotal[ib][5];
 					}
 					tooutput.push(pctotal[ib]);
+					pclnumidlist.push(pctotal[ib][8])
 					
 					pccount+=1;
 					
@@ -145,34 +157,73 @@ html
 
 
 			
+			var isStatusConsistance=true;
+			var icurrentStatus;
+			for(var ib=0; ib<tooutput.length; ib++){
+				if(ib==0){
+					icurrentStatus=tooutput[ib][9];
+				}else{
+					if(icurrentStatus!=tooutput[ib][9]){
+						isStatusConsistance=false;
+					}
+				}
+
+			}
+			
 			var markingstatus=document.createElement('a');
+
+			
 			if(tooutput[0][9]=='ini'){
 				markingstatus.innerHTML='마킹준비됨'
 				var ismarkingstatusComplete=false;
 			}else if(tooutput[0][9]=='markingcomplete'){
 				markingstatus.innerHTML='마킹완료'
 				var ismarkingstatusComplete=true;
+			}else if(tooutput[0][9]=='markingprogressing'){
+				markingstatus.innerHTML='마킹중'
+				var ismarkingstatusComplete=false;
 			}
+			console.log(tooutput)
+			
 			
 
 			var tooutputstr=JSON.stringify(tooutput)
 
-			if(indslot[ia][4]==1){
+			if(indslot[ia][4]==1){//에러관점에서 정상. 에러가 아닌 상태.
 				cstatus.innerHTML='작업대기';
 
 
 				if(ismarkingstatusComplete){
-					gobutton.innerHTML='Complete';
-				}else{
-					gobutton.onclick=function(s,k){
+					gobutton.innerHTML='clickToUndo';
+					gobutton.onclick=function(k){
 						return function(){
+							socket.emit('scanstatus',{mode:'undo',pclnumidlist:k})
+						}
+					}(pclnumidlist)
+
+				}else{
+					gobutton.onclick=function(s,k,u,i){
+						
+						return function(){
+							
+
+							if(i[0][9]=='ini'){
+								socket.emit('scanstatus',{mode:'pclmarkingstatusedit',pclnumidlist:u})	
+								
+								
+							}else if(i[0][9]=='markingprogressing'){
+								
+							}else{
+								
+							}
 							window.location='./selectoutput?selectpclist='+s+'&fieldstring='+orderlist[0].orderset+'&tooutputstr='+k;
 						}
-					}(pclstr,tooutputstr);
+						
+					}(pclstr,tooutputstr,pclnumidlist,tooutput);
 					gobutton.innerHTML='GO';
 				}
 				
-			}else if(indslot[ia][4]=='ini'){
+			}else if(indslot[ia][4]=='ini'){//에러관점에서 아직 미처리 상태
 				pcordera.innerHTML=pcorder;
 				cstatus.innerHTML='데이터대기';
 				gobutton.innerHTML='GO';
@@ -180,7 +231,7 @@ html
 				gobutton.style.color='red';
 				gobutton.style.backgroundColor='black';
 				//gobutton.style.backgroundColor='2px 2px 4px black';
-			}else if(indslot[ia][4]=='edited'){
+			}else if(indslot[ia][4]=='edited'){//에러관점에서 처리된 상태
 				pcordera.innerHTML=pcorder;
 				cstatus.innerHTML='작업대기';
 				gobutton.innerHTML='GO';
@@ -216,4 +267,9 @@ html
 
 			
 		}
+		socket.on('scanstatusafter',function(a){
+			if(a.mode=='pclmarkingstatusedit' || a.mode=='undo' || a.mode=='tempreset'){
+				location.reload();
+			}
+		})
 		
