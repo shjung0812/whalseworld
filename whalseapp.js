@@ -69,7 +69,7 @@ app.use('/controller',express.static(__dirname+"/controller"));
 app.use('/model',express.static(__dirname+"/model"));
 app.use('/assets',express.static(__dirname+"/assets"));
 app.use('/bootstrap',express.static(__dirname+"/node_modules/bootstrap/dist/"));
-app.use('/react',express.static(__dirname + '/reactwhalse'));
+app.use('/reactwhalse',express.static(__dirname + '/reactwhalse'));
 
 var bodyParser = require('body-parser')
 app.use(bodyParser.urlencoded({extended: false}));
