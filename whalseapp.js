@@ -836,7 +836,9 @@ app.get('/whalse/admin/processinglistdisplay',function(req,res){
 });
 
 
-
+app.get('/whalse/pageaftermarking',function(req,res){
+	res.render('pageaftermarking')
+})
 
 
 
@@ -1267,6 +1269,27 @@ var whalse=io.of('/whalse');
 //var statedata=['arrival0num','arrival1num','arrival2num','arrival3num','status0text','status1text','status2text','status3text','status0pic','status1pic','status2pic','status3pic']
 whalse.on('connection',function(socket){
 	console.log('vdrg connected');
+
+	socket.on('getpageaftermarking',function(a){
+		if(a.mode=='askdata'){
+			console.log('here is the getpageaftermarking')
+			//initial data를 참조하여 processinglist db의 markingcomplete된 것들 데이터 가져오기.
+			sf.whalsegetinfodb('select * from initialdata join processinglist on initialdata.parcel_code COLLATE utf8mb4_0900_ai_ci =processinglist.parcelcodelist COLLATE utf8mb4_0900_ai_ci left join madaeitemconnect on initialdata.numid=madaeitemconnect.childcol where processinglist.markingstatus="markingcomplete" and madaeitemconnect.childcol is not null',function(b){
+				
+				//madaeitemconnect db의 리스트를 가져오기. 
+				sf.whalsegetinfodb('select * from madaeitemconnect',function(m){
+					console.log(b);
+
+
+					//두 db를 비교하여 추가상품화데이터 고르기 
+				});
+
+			
+			
+			});
+			
+		}
+	})
 
 	socket.on('scanstatus',function(a){
 		console.log(a)
