@@ -1273,13 +1273,15 @@ whalse.on('connection',function(socket){
 	socket.on('getpageaftermarking',function(a){
 		if(a.mode=='askdata'){
 			console.log('here is the getpageaftermarking')
-			//initial data를 참조하여 processinglist db의 markingcomplete된 것들 데이터 가져오기.
-			sf.whalsegetinfodb('select * from initialdata join processinglist on initialdata.parcel_code COLLATE utf8mb4_0900_ai_ci =processinglist.parcelcodelist COLLATE utf8mb4_0900_ai_ci left join madaeitemconnect on initialdata.numid=madaeitemconnect.childcol where processinglist.markingstatus="markingcomplete" and madaeitemconnect.childcol is not null',function(b){
+			//initial data를 참조하여 processinglist db의 markingcomplete된 것들 중에서 마대에 속해 있지 않은 데이터 가져오기. 
+				// marking complete된 데이터 세트를 준비하고, 이 데이터 세트에 madaeitemconnect완료된 데이터를 서로 맞추어보고, 맞추어지지 않는것을 가져온다. 
+				sf.whalsegetinfodb('select * from initialdata join processinglist on initialdata.parcel_code COLLATE utf8mb4_0900_ai_ci =processinglist.parcelcodelist COLLATE utf8mb4_0900_ai_ci left join madaeitemconnect on initialdata.numid=madaeitemconnect.childcol where processinglist.markingstatus="markingcomplete" and madaeitemconnect.childcol is not null',function(b){
+				//sf.whalsegetinfodb('select * from initialdata join processinglist on initialdata.parcel_code COLLATE utf8mb4_0900_ai_ci =processinglist.parcelcodelist COLLATE utf8mb4_0900_ai_ci left join madaeitemconnect on initialdata.numid=madaeitemconnect.childcol where processinglist.markingstatus="markingcomplete"',function(b){
 				
 				//madaeitemconnect db의 리스트를 가져오기. 
 				sf.whalsegetinfodb('select * from madaeitemconnect',function(m){
 					console.log(b);
-
+					console.log(b.length)
 
 					//두 db를 비교하여 추가상품화데이터 고르기 
 				});

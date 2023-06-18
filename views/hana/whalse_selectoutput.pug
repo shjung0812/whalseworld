@@ -370,6 +370,7 @@ html
 							}else if(v=='madenum'){
 								sdiv.id=a.data[ia].numid+v;
 								sdiv.setAttribute('data-item',v);
+								
 								sdiv.setAttribute('data-numid',a.data[ia].numid);
 								if(a.data[ia].childcol!=null){
 									fdiv.style.color='#aaaaaa';
@@ -1163,16 +1164,18 @@ html
 				if(chkm==0){
 					sdiv.onclick=function(i){
 						return function(){
-
+							console.log('here 0')
 							var numidlist=''
 							var fdiv=document.getElementsByClassName('madenumcontent');
 							var currcount=Number(inst.input[0].parentNode.getAttribute('data-madecount'));
+							console.log('here 1')
 							
 							for(var ia=currcount; ia<fdiv.length; ia++){
 							//for(var ia=currcount; ia<fdiv.length; ia++){
 								while(fdiv[ia].firstChild){
 									fdiv[ia].firstChild.remove();
 								}
+								console.log('here 2')
 								var boutgoingdate=document.createElement('input');
 								boutgoingdate.type='text';
 								boutgoingdate.className='datecon';
@@ -1276,10 +1279,11 @@ html
 									});
 								});
 
-							
+								console.log('here 4')
 
 
 								//sdiv.setAttribute('data-numid',a.data[ia].numid);
+								console.log(fdiv[ia]);
 								if(ia != fdiv.length-1){
 									numidlist=numidlist+fdiv[ia].getAttribute('data-numid')+',';
 								}else{
@@ -1297,7 +1301,7 @@ html
 							var madaename=t+'-'+i;
 
 
-
+							
 							socket.emit('madaeitemconnect',{madaename:madaename,numidlist:numidlist.split(',')});
 				
 							
