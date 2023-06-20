@@ -1,4 +1,4 @@
-import {SelectOutputModel} from '/model/model_rest/model_rest_pageaftermarking/model_rest_selectoutput.js'
+import {SelectOutputModel} from '/model/model_rest/model_rest_selectoutput.js'
 export class PageAfterMarkingController {
     constructor(){
         
@@ -14,5 +14,3 @@ export class PageAfterMarkingController {
     
 }
 
-const varPageAfterMarkingContoller=new PageAfterMarkingController();
-varPageAfterMarkingContoller.getRemainedDataController();

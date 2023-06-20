@@ -9,6 +9,6 @@ export class SelectOutputModel {
  
 };
 
-const k = SelectOutputModel();
+const k = new SelectOutputModel();
 console.log(k);
 
