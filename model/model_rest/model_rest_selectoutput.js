@@ -3,9 +3,13 @@ export class SelectOutputModel {
     
     constructor() {
         this.socket = io('/whalse');
-        console.log('model_res_selectoutput - constructor');
+        console.log('model_rest_selectoutput - constructor');
+        this.getBackdata();
     }
     
+    getBackdata(){
+        console.log(tooutput);
+    }
  
 };
 
