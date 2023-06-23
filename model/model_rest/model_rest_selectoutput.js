@@ -8,8 +8,11 @@ export class SelectOutputModel {
     }
     
     getBackdata(){
-        
         return tooutput;
+    }
+    getFieldString(){
+        return fieldstring;
+        
     }
  
 };

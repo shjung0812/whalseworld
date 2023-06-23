@@ -206,7 +206,7 @@ html
 			
 			div(id='showdata')
 		script(type='module', src="/controller/selectoutput_controller.js")
-		//script(type='module', src='/component/component_pageaftermarking/pageaftermarking_component.js')
+		script(type='module', src='/component/selectoutput_component.js')
 		script(type='module', src='/model/model_rest/model_rest_selectoutput.js')
 
 	script.
@@ -214,7 +214,7 @@ html
 		
 		var socket = io('/whalse');
 		
-		//var tooutput=!{JSON.stringify(tooutput)};
+		var tooutput=!{JSON.stringify(tooutput)};
 		var errboard=[]
 		var tagmadae=!{JSON.stringify(tagmadae)};
 		
@@ -267,6 +267,7 @@ html
 		socket.emit('whalsegetdata',{selectpclist:tooutput});
 		
 		socket.on('whalsegetdataafter',function(a){
+			/*
 			console.log(a);
 			var sdata=document.getElementById('showdata');
 			var titlebar=document.createElement('div');
@@ -302,7 +303,7 @@ html
 				}
 			//}
 			}
-			sdata.appendChild(titlebar);
+			sdata.appendChild(titlebar);*/
 
 
 
