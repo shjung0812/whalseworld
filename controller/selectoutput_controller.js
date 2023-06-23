@@ -1,16 +1,14 @@
 import {SelectOutputModel} from '/model/model_rest/model_rest_selectoutput.js'
-export class PageAfterMarkingController {
+export class SelectOutputController {
     constructor(){
-        
-        
-        this.varPageAfterMarkingModel = new PageAfterMarkingModel();
-        
+        this.selectoutputmodel=new SelectOutputModel();
     
     }
-
-    async getRemainedDataController(){
-        return await this.varPageAfterMarkingModel.getRemainedDataModel();
+    getBackdataController(){
+        return this.selectoutputmodel.getBackdata();
     }
+    
+
     
 }
 
