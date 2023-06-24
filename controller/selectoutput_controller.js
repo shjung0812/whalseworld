@@ -4,8 +4,8 @@ export class SelectOutputController {
         this.selectoutputmodel=new SelectOutputModel();
     
     }
-    getBackdataController(){
-        return this.selectoutputmodel.getBackdata();
+    getParcelCodeStatusDataController(){
+        return this.selectoutputmodel.getParcelCodeStatusData();
     }
     getFieldStringController(){
         const fieldstring = this.selectoutputmodel.getFieldString();
@@ -16,9 +16,10 @@ export class SelectOutputController {
 			//var orderlist=['timedeparture','invoicenum','invoicenummatch','chinesesize','chineseoption','chineseproduct','optioncode','product','documentnum','ordernum2','compnum','ordernum','numid']
 		}
         return orderlist;
-
     }
-    
+    async getBackData(){
+        return await this.selectoutputmodel.requestBackData();
+    }
 
     
 }
