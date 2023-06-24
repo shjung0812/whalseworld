@@ -1,5 +1,5 @@
 import { SelectOutputController } from "/controller/selectoutput_controller.js";
-import { RowContentMember } from "/comoponent/component_selectoutput/rowcontentmember_component.js";
+import { RowContentMember } from "/component/component_selectoutput/rowcontentmember_component.js";
 class SelectOutputComponent {
     constructor() {  
         
@@ -48,19 +48,20 @@ class SelectOutputComponent {
 
                     for(let v of orderlist){
                         var sdiv=document.createElement('div');
+                        RowContentMember.run({receiveddom:sdiv,targetdom:fdiv});
 
                         if(v=='img_url'){
                             
                             var imgel=document.createElement('img');
-                            imgel.src=a.data[ia][v];
+                            imgel.src=rowbackdata.data[ia][v];
                             sdiv.appendChild(imgel);
-                            RowContentMember.run({receiveddom:sdiv,targetdom:fdiv});
+                            
                         }else if(v=='madenum'){
-                            sdiv.id=a.data[ia].numid+v;
+                            sdiv.id=rowbackdata.data[ia].numid+v;
                             sdiv.setAttribute('data-item',v);
                             
-                            sdiv.setAttribute('data-numid',a.data[ia].numid);
-                            if(a.data[ia].childcol!=null){
+                            sdiv.setAttribute('data-numid',rowbackdata.data[ia].numid);
+                            if(rowbackdata.data[ia].childcol!=null){
                                 fdiv.style.color='#aaaaaa';
                             }else{
                                 sdiv.className='madenumcontent';
@@ -159,23 +160,23 @@ class SelectOutputComponent {
 
 
                             }
-                
-                            fdiv.appendChild(sdiv);
+                            
+                            
 
 
 
                         }else if(v=='numid'){
                         }else if(v=='status0text'||v=='status1text' || v=='status2text' || v=='status3text'||v=='status0pic'||v=='status1pic'||v=='status2pic'||v=='status3pic'||v=='arrival0num'||v=='arrival1num'||v=='arrival2num'||v=='arrival3num'){
 
-                            if(v=='status'+a.data[ia].statuscode+'text'){
-                                if(a.data[ia][v]!=null){
+                            if(v=='status'+rowbackdata.data[ia].statuscode+'text'){
+                                if(rowbackdata.data[ia][v]!=null){
                             
                                     sdiv.innerHTML=a.data[ia][v];
                                 }else{
                                     sdiv.innerHTML='TEXT EMPTY';
                                 }
 
-                                sdiv.id='status'+a.data[ia].numid+'text';
+                                sdiv.id='status'+rowbackdata.data[ia].numid+'text';
 
 
                                 fdiv.appendChild(sdiv);
@@ -183,18 +184,18 @@ class SelectOutputComponent {
                                     return function(){
                                         editFunc([i,findCurrentScode(i),'text',k],50,20,20)
                                     }
-                                }(a.data[ia].numid,a.data[ia][v]);
+                                }(rowbackdata.data[ia].numid,rowbackdata.data[ia][v]);
                             }
 
-                            if(v=='status'+a.data[ia].statuscode+'pic'){
-                                if(a.data[ia][v]!=null){
+                            if(v=='status'+rowbackdata.data[ia].statuscode+'pic'){
+                                if(rowbackdata.data[ia][v]!=null){
                                     var sdivel=document.createElement('img');
-                                    sdivel.src='/whalse/whalsephoto/'+a.data[ia][v];
+                                    sdivel.src='/whalse/whalsephoto/'+rowbackdata.data[ia][v];
                                     sdiv.appendChild(sdivel);
                                 }else{
                                     sdiv.innerHTML='PIC EMPTY';
                                 }
-                                sdiv.id='status'+a.data[ia].numid+'pic';
+                                sdiv.id='status'+rowbackdata.data[ia].numid+'pic';
 
                                 sdiv.className='statuspic';
                                 fdiv.appendChild(sdiv);
@@ -203,34 +204,34 @@ class SelectOutputComponent {
                                         PicContainer(40,10,10,i,findCurrentScode(i))
 
                                     }
-                                }(a.data[ia].numid);
+                                }(rowbackdata.data[ia].numid);
 
                             }
-                            if(v=='arrival'+a.data[ia].statuscode+'num'){
-                                sdiv.id='arrival'+a.data[ia].numid+'num';
+                            if(v=='arrival'+rowbackdata.data[ia].statuscode+'num'){
+                                sdiv.id='arrival'+rowbackdata.data[ia].numid+'num';
                                 var arrsub0div=document.createElement('div');
                                 arrsub0div.className='arrsubdiv';
                                 
                                 sdiv.className='arrdiv';
 
-                                if(a.data[ia][v]!=null){
+                                if(rowbackdata.data[ia][v]!=null){
 
-                                    if(a.data[ia].statuscode==0){
-                                        arrsub0div.innerHTML=a.data[ia].order_quantity;
+                                    if(rowbackdata.data[ia].statuscode==0){
+                                        arrsub0div.innerHTML=rowbackdata.data[ia].order_quantity;
                                         arrsub0div.onclick=function(i){
                                             return function(){
                                                 //NumContainer(30,20,20,i,findCurrentScode(i))
                                             }
-                                        }(a.data[ia].numid);
+                                        }(rowbackdata.data[ia].numid);
 
 
                                     }else{
-                                        arrsub0div.innerHTML=a.data[ia][v];
+                                        arrsub0div.innerHTML=rowbackdata.data[ia][v];
                                         arrsub0div.onclick=function(i){
                                             return function(){
                                                 NumContainer(30,20,20,i,findCurrentScode(i))
                                             }
-                                        }(a.data[ia].numid);
+                                        }(rowbackdata.data[ia].numid);
 
                                     }
 
@@ -238,13 +239,13 @@ class SelectOutputComponent {
                                     sdiv.appendChild(arrsub0div);
                                     
                                 }else{
-                                    if(a.data[ia].statuscode==0){
-                                        sdiv.innerHTML=a.data[ia].order_quantity;
+                                    if(rowbackdata.data[ia].statuscode==0){
+                                        sdiv.innerHTML=rowbackdata.data[ia].order_quantity;
                                         sdiv.onclick=function(i){
                                             return function(){
                                                 //NumContainer(30,20,20,i,findCurrentScode(i))
                                             }
-                                        }(a.data[ia].numid);
+                                        }(rowbackdata.data[ia].numid);
 
                                     }else{
                                         sdiv.innerHTML='NUM EMPTY';
@@ -252,7 +253,7 @@ class SelectOutputComponent {
                                             return function(){
                                                 NumContainer(30,20,20,i,findCurrentScode(i))
                                             }
-                                        }(a.data[ia].numid);
+                                        }(rowbackdata.data[ia].numid);
 
                                     }
 
@@ -312,9 +313,9 @@ class SelectOutputComponent {
                             status2div.appendChild(status2a);
 
 
-                            status0.className='status'+a.data[ia].numid+'input';
-                            status1.className='status'+a.data[ia].numid+'input';
-                            status2.className='status'+a.data[ia].numid+'input';
+                            status0.className='status'+rowbackdata.data[ia].numid+'input';
+                            status1.className='status'+rowbackdata.data[ia].numid+'input';
+                            status2.className='status'+rowbackdata.data[ia].numid+'input';
 
                             status0.type='radio';
                             status1.type='radio';
@@ -324,11 +325,11 @@ class SelectOutputComponent {
                             status1.name='statusc'+ia;
                             status2.name='statusc'+ia;
 
-                            if(a.data[ia].statuscode==0){
+                            if(rowbackdata.data[ia].statuscode==0){
                                 status0.checked='true';
-                            }else if(a.data[ia].statuscode==1){
+                            }else if(rowbackdata.data[ia].statuscode==1){
                                 status1.checked='true';
-                            }else if(a.data[ia].statuscode==2){
+                            }else if(rowbackdata.data[ia].statuscode==2){
                                 status2.checked='true';
                             }
                             status0.onclick=function(i,j){
@@ -336,20 +337,20 @@ class SelectOutputComponent {
                                     statusCheckedSend(i,j,'inboundstatus');
                                     updateStatusShown(i,j);
                                 }
-                            }(a.data[ia].numid,0);
+                            }(rowbackdata.data[ia].numid,0);
 
                             status1.onclick=function(i,j){
                                 return function(){
                                     statusCheckedSend(i,j,'inboundstatus');
                                     updateStatusShown(i,j);
                                 }
-                            }(a.data[ia].numid,1);
+                            }(rowbackdata.data[ia].numid,1);
                             status2.onclick=function(i,j){
                                 return function(){
                                     statusCheckedSend(i,j,'inboundstatus');
                                     updateStatusShown(i,j);
                                 }
-                            }(a.data[ia].numid,2);
+                            }(rowbackdata.data[ia].numid,2);
 
                             sdiv.appendChild(status0div);
                             //sdiv.appendChild(status0a);
@@ -399,11 +400,11 @@ class SelectOutputComponent {
                             var comb2div=document.createElement('div');
                             
                         
-                            var bo=a.data[ia].w_orderday.split('_')[0];
+                            var bo=rowbackdata.data[ia].w_orderday.split('_')[0];
                             if(bo=='ON' || bo=='MOON' || bo=='DW' || bo=='CP'){
-                                comb2div.innerHTML='돌핀웨일'+'<br/>'+a.data[ia].kor_item_name+'<br/>'+a.data[ia].kor_option;
+                                comb2div.innerHTML='돌핀웨일'+'<br/>'+rowbackdata.data[ia].kor_item_name+'<br/>'+rowbackdata.data[ia].kor_option;
                             }else if(bo=='DT' || bo=='MODT' || bo=='KK' || bo=='MOKK' || bo=='SI' || bo=='MOSI' || bo=='MG'||bo=='MOOMG'){
-                                comb2div.innerHTML=a.data[ia].order_color.replaceAll('|','<br/>');
+                                comb2div.innerHTML=rowbackdata.data[ia].order_color.replaceAll('|','<br/>');
                             }else{
                                 comb2div.innerHTML='Error'
                             }
@@ -417,7 +418,7 @@ class SelectOutputComponent {
                             sdiv.className='comb3div';
                             var comb3div=document.createElement('div');
                                 
-                            comb3div.innerHTML='https://detail.1688.com/offer/'+a.data[ia].offer_id+'.html'
+                            comb3div.innerHTML='https://detail.1688.com/offer/'+rowbackdata.data[ia].offer_id+'.html'
 
                             sdiv.appendChild(comb3div);
                             fdiv.appendChild(sdiv);
