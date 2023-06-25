@@ -48,123 +48,13 @@ class SelectOutputComponent {
 
                     for(let v of orderlist){
                         var sdiv=document.createElement('div');
-                        RowContentMember.run({receiveddom:sdiv,targetdom:fdiv});
-
+                        RowContentMember.run({targetdom:fdiv,receiveddom:sdiv});
                         if(v=='img_url'){
-                            
-                            var imgel=document.createElement('img');
-                            imgel.src=rowbackdata.data[ia][v];
-                            sdiv.appendChild(imgel);
-                            
+                            RowContentMember.imgurlcontent({usedata:rowbackdata.data[ia][v],targetdom:fdiv,receiveddom:sdiv});
+
                         }else if(v=='madenum'){
-                            sdiv.id=rowbackdata.data[ia].numid+v;
-                            sdiv.setAttribute('data-item',v);
+                            datacount=RowContentMember.madenumcontent({usedata:rowbackdata.data,orderlist:v,forcount:ia,targetdom:fdiv,receiveddom:sdiv});
                             
-                            sdiv.setAttribute('data-numid',rowbackdata.data[ia].numid);
-                            if(rowbackdata.data[ia].childcol!=null){
-                                fdiv.style.color='#aaaaaa';
-                            }else{
-                                sdiv.className='madenumcontent';
-                                sdiv.setAttribute('data-madecount',datacount);
-                                var boutgoingdate=document.createElement('input');
-                                boutgoingdate.type='text';
-                                boutgoingdate.className='datecon';
-                                sdiv.appendChild(boutgoingdate);	
-
-                                var optionbox=document.createElement('div');
-                                optionbox.className='optionbox';
-                                optionbox.style.width='40%';
-                                
-
-                                var chbox1=document.createElement('input');
-                                chbox1.type='checkbox';
-                                chbox1.name='outselect'+ia;	
-                                chbox1.value='downselect';
-                                chbox1.className='chbox1';
-                                chbox1.onclick=function(jcurrcount){
-                                    return function(){
-                                        var ifdiv=document.getElementsByClassName('madenumcontent');
-                                        for(var ic=0; ic<ifdiv.length; ic++){
-                                            ifdiv[ic].parentNode.style.backgroundColor='';
-                                            ifdiv[ic].childNodes[1].childNodes[0].checked=false;
-                                            ifdiv[ic].childNodes[1].childNodes[1].checked=false;
-                                            ifdiv[ic].childNodes[1].childNodes[2].checked=false;
-                                        }
-
-                                        for(var ib=jcurrcount; ib<ifdiv.length; ib++){
-                                            ifdiv[ib].parentNode.style.backgroundColor='red';
-                                            ifdiv[ib].childNodes[1].childNodes[0].checked=true;
-                                        }
-
-                                    }
-                                }(datacount);
-
-                                var chbox2=document.createElement('input');
-                                chbox2.type='checkbox';
-                                chbox2.name='outselect'+ia;	
-                                chbox2.value='ss';
-                                chbox2.className='chbox2';
-                                chbox2.onclick=function(jcurrcount){
-                                    return function(){
-                                        var ifdiv=document.getElementsByClassName('madenumcontent');
-                                        for(var ic=0; ic<ifdiv.length; ic++){
-                                            ifdiv[ic].parentNode.style.backgroundColor='';
-                                            ifdiv[ic].childNodes[1].childNodes[0].checked=false;
-                                            //ifdiv[ic].childNodes[1].childNodes[1].checked=false;
-                                            ifdiv[ic].childNodes[1].childNodes[2].checked=false;
-                                        }
-
-                                        ifdiv[jcurrcount].parentNode.style.backgroundColor='purple';
-                                        if(ifdiv[jcurrcount].childNodes[1].childNodes[1].checked){
-                                            ifdiv[jcurrcount].childNodes[1].childNodes[1].checked=true;
-                                        }else{
-                                            ifdiv[jcurrcount].childNodes[1].childNodes[1].checked=false;
-                                        }
-
-
-                                    }
-                                }(datacount);
-
-                                var chbox3=document.createElement('input');
-                                chbox3.type='checkbox';
-                                chbox3.name='oustselect'+ia;	
-                                chbox3.value='groupselect';
-                                chbox3.className='chbox3';
-                                chbox3.onclick=function(jcurrcount){
-                                    return function(){
-
-                                        var ifdiv=document.getElementsByClassName('madenumcontent');
-                                        if(ifdiv[jcurrcount].childNodes[1].childNodes[2].checked){
-                                            ifdiv[jcurrcount].childNodes[1].childNodes[2].checked=true;
-                                            ifdiv[jcurrcount].parentNode.style.backgroundColor='blue';
-                                        }else{
-                                            ifdiv[jcurrcount].parentNode.style.backgroundColor='';
-                                            ifdiv[jcurrcount].childNodes[1].childNodes[2].checked=false;
-                                        }
-
-
-                                    }
-                                }(datacount);
-
-
-                                optionbox.appendChild(chbox1);
-                                optionbox.appendChild(chbox2);
-                                optionbox.appendChild(chbox3);
-
-                                sdiv.appendChild(optionbox);
-                                //fdiv.style.backgroundColor=bgcolorset[bgnum]
-
-
-                                datacount+=1;
-
-
-
-                            }
-                            
-                            
-
-
-
                         }else if(v=='numid'){
                         }else if(v=='status0text'||v=='status1text' || v=='status2text' || v=='status3text'||v=='status0pic'||v=='status1pic'||v=='status2pic'||v=='status3pic'||v=='arrival0num'||v=='arrival1num'||v=='arrival2num'||v=='arrival3num'){
 
