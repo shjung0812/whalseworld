@@ -378,6 +378,21 @@ export class RowContentMember {
         //fdiv.appendChild(receiveddom);
 
     }
+    static etccontent({receivedparcelcode,receivednumber,usedata,forcount,datacount,orderlist,targetdom,receiveddom}){
+        receiveddom.id=usedata[forcount].numid+orderlist;
+        receiveddom.setAttribute('data-item',orderlist);
+        receiveddom.setAttribute('data-numid',usedata[forcount].numid);
+        var sdiva=document.createElement('a');	
+        sdiva.innerHTML=usedata[forcount][orderlist];
+        sdiva.onclick=function(i,j,k,l){
+            return function(){
+                editDetailItem(l,i,j,k);
+            }
+        }(orderlist,usedata[forcount][orderlist],receiveddom,usedata[forcount].numid)
+
+        receiveddom.appendChild(sdiva);
+        
+    }
 
 
 
