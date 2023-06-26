@@ -125,6 +125,8 @@ export class RowContentMember {
 
     //receiveddom-> sdiv
     static statuscontent({usedata,forcount,datacount,orderlist,targetdom,receiveddom}){
+
+        var isThisContentExist=false;
         
         if(orderlist=='status'+usedata[forcount].statuscode+'text'){
             if(usedata[forcount][orderlist]!=null){
@@ -143,7 +145,10 @@ export class RowContentMember {
                     editFunc([i,findCurrentScode(i),'text',k],50,20,20)
                 }
             }(usedata[forcount].numid,usedata[forcount][orderlist]);
+            isThisContentExist=true;
+            return;
         }
+
 
         if(orderlist=='status'+usedata[forcount].statuscode+'pic'){
             if(usedata[forcount][orderlist]!=null){
@@ -163,6 +168,8 @@ export class RowContentMember {
 
                 }
             }(usedata[forcount].numid);
+            isThisContentExist=true;
+            return;
 
         }
         if(orderlist=='arrival'+usedata[forcount].statuscode+'num'){
@@ -220,9 +227,12 @@ export class RowContentMember {
             }
 
             //fdiv.appendChild(sdiv);
-
+            isThisContentExist=true;
+            return;
         }
-
+        if(!isThisContentExist){
+            receiveddom.remove();
+        }
     };
     static parcelnumberingcontent({receivedparcelcode,receivednumber,usedata,forcount,datacount,orderlist,targetdom,receiveddom}){
         
@@ -240,6 +250,7 @@ export class RowContentMember {
 
     static statuscodecontent({receivedparcelcode,receivednumber,usedata,forcount,datacount,orderlist,targetdom,receiveddom}){
         receiveddom.className='statusdiv';
+
         var status0div=document.createElement('div');
         status0div.className='statussubdiv';
         var status0a=document.createElement('a');
@@ -371,9 +382,9 @@ export class RowContentMember {
     static comb3content({receivedparcelcode,receivednumber,usedata,forcount,datacount,orderlist,targetdom,receiveddom}){
         receiveddom.className='comb3div';
         var comb3div=document.createElement('div');
-            
-        comb3div.innerHTML='https://detail.1688.com/offer/'+usedata[forcount].offer_id+'.html'
-
+        comb3div.innerHTML='https://detail.1688.com/offer/'+usedata[forcount].offer_id+'.html';
+        
+        
         receiveddom.appendChild(comb3div);
         //fdiv.appendChild(receiveddom);
 
