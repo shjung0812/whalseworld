@@ -75,7 +75,7 @@ class SelectOutputComponent {
                 if(v=='img_url'){
                     RowContentMember.imgurlcontent({usedata:rowbackdata.data[ia][v],targetdom:backdataContentContainer,receiveddom:sdiv});
                 }else if(v=='madenum'){
-                    datacount=RowContentMember.madenumcontent({usedata:rowbackdata.data,orderlist:v,forcount:ia,targetdom:backdataContentContainer,receiveddom:sdiv});
+                    datacount=RowContentMember.madenumcontent({usedata:rowbackdata.data,datacount:datacount,orderlist:v,forcount:ia,targetdom:backdataContentContainer,receiveddom:sdiv});
                 }else if(v=='numid'){
                 }else if(v=='status0text'||v=='status1text' || v=='status2text' || v=='status3text'||v=='status0pic'||v=='status1pic'||v=='status2pic'||v=='status3pic'||v=='arrival0num'||v=='arrival1num'||v=='arrival2num'||v=='arrival3num'){
                     RowContentMember.statuscontent({usedata:rowbackdata.data,orderlist:v,forcount:ia,targetdom:backdataContentContainer,receiveddom:sdiv});                           
