@@ -15,7 +15,7 @@ export class RowContentMember {
     }
 
     static madenumcontent({usedata,forcount,datacount,orderlist,targetdom,receiveddom}){
-        
+        console.log(datacount);
         receiveddom.id=usedata[forcount].numid+orderlist;
         receiveddom.setAttribute('data-item',orderlist);
         receiveddom.setAttribute('data-numid',usedata[forcount].numid);
