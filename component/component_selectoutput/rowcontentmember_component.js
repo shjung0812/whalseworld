@@ -1,18 +1,7 @@
 export class RowContentMember {
     constructor(){
         
-		$(function (){
-            $(".datecon").datepicker({
-                onSelect:function(t,inst){
-                    //applyTheSameEnd(t,inst);
-                    applyTheMiddle('each',t,inst);
-                }
-            });
-            });
-            $.datepicker.setDefaults({
-            dateFormat:'ymmdd'
-            //dateFormat:'yy-mm-dd'
-            });
+
     
         
     }
