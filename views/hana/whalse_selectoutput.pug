@@ -3,7 +3,7 @@ html
 	head
 		script(src='/socket.io/socket.io.js')
 		script(src='/whalse/whalselib/infoinput.js')
-		link(rel="stylesheet",href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css")
+		link(rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css")
 		script(src="https://code.jquery.com/jquery-1.12.4.js")
 		script(src="https://code.jquery.com/ui/1.12.1/jquery-ui.js")
 		link(href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous")
@@ -148,7 +148,7 @@ html
 				margin:10% 10%;
 				background-color:#aaaaaa;
 				//top:10%;
-			
+
 			}
 			.markingnumlistdiv {
 				width:10%;
@@ -182,7 +182,7 @@ html
 			.errpicdiv img {
 				width:30%;
 			}
-		
+
 	body
 
 		div(id='papertitlebar')
@@ -192,19 +192,19 @@ html
 				button(onclick='markingComplete();') 완료
 		div(id='containerdiv')
 			div(id='showdata')
-		script(type='module', src="/controller/selectoutput_controller.js")
-		script(type='module', src='/component/selectoutput_component.js')
-		script(type='module', src='/model/model_rest/model_rest_selectoutput.js')
+		script(type='module' src="/controller/selectoutput_controller.js")
+		script(type='module' src='/component/selectoutput_component.js')
+		script(type='module' src='/model/model_rest/model_rest_selectoutput.js')
 
 	script.
+		
 
-		
 		var socket = io('/whalse');
-		
+
 		var tooutput=!{JSON.stringify(tooutput)};
 		var errboard=[]
 		var tagmadae=!{JSON.stringify(tagmadae)};
-		
+
 		var bgcolorset=['#aaaaaa','#cccccc','#eeeeee'];
 		var bgnum=0;
 
@@ -248,6 +248,7 @@ html
 			location.href='./scanstatus'
 		})
 		
+
 		function errorMsgReport(pclistnumid,pc, detailcontent,t){
 
 
@@ -264,7 +265,7 @@ html
 				var faa=document.createElement('a');
 
 				faa.innerHTML=cediv[0].firstChild.value;
-				
+
 				faa.onclick=function(i,j,k){
 					return function(){	
 						errorMsgReport(i,j,'',k);
@@ -283,7 +284,7 @@ html
 			finput.type='text';
 			finput.value=prvmsg;
 			finput.id=pclistnumid+'errormsg'+pc;
-			
+
 			var fbutton=document.createElement('button');
 			fbutton.innerHTML='click';
 			fbutton.onclick=function(i,j,k,l){
@@ -305,6 +306,9 @@ html
 			socket.emit('errcontent',{pclistnumid:pclistnumid, content:content,pc:pc,mode:mode});
 		}
 
+    
+        	
+
 
 		socket.on('errcontentafter',function(a){
 
@@ -314,7 +318,7 @@ html
 					var faa=document.createElement('a');
 
 					faa.innerHTML=cediv[0].firstChild.value;
-				
+
 					faa.onclick=function(i,j,k){
 						return function(){	
 							errorMsgReport(i,j,'',k);
@@ -355,7 +359,7 @@ html
 
 			}
 
-	
+
 		});
 
 		/*
@@ -420,7 +424,7 @@ html
 							var fdiv=document.getElementsByClassName('madenumcontent');
 							var currcount=Number(inst.input[0].parentNode.getAttribute('data-madecount'));
 							console.log('here 1')
-							
+
 							for(var ia=currcount; ia<fdiv.length; ia++){
 							//for(var ia=currcount; ia<fdiv.length; ia++){
 								while(fdiv[ia].firstChild){
@@ -438,7 +442,7 @@ html
 								var optionbox=document.createElement('div');
 								optionbox.className='optionbox';
 								optionbox.style.width='40%';
-								
+
 
 
 								var chbox1=document.createElement('input');
@@ -540,7 +544,7 @@ html
 								}else{
 									numidlist=numidlist+fdiv[ia].getAttribute('data-numid');
 								}
-				
+
 
 							}
 
@@ -552,17 +556,17 @@ html
 							var madaename=t+'-'+i;
 
 
-							
+
 							socket.emit('madaeitemconnect',{madaename:madaename,numidlist:numidlist.split(',')});
-				
-							
+
+
 							var frfd=document.getElementsByClassName('frfd');
 							if(frfd.length!=0){
 								while(frfd[0]){
 									frfd[0].remove();
 								}
 
-								
+
 							}
 
 
@@ -583,7 +587,7 @@ html
 									}else{
 										var gdiv=document.createElement('div');
 										gdiv.className='grouping';
-										
+
 										var grouppanel=document.createElement('div');	
 										grouppanel.style.backgroundColor='#33FFEC';
 										gdiv.appendChild(grouppanel);
@@ -591,7 +595,7 @@ html
 
 										var groupchoice=document.createElement('div');
 										groupchoice.innerHTML='선택'
-									
+
 										grouppanel.appendChild(groupchoice);
 
 
@@ -601,7 +605,7 @@ html
 										selectedch.style.backgroundColor='rgba(0,0,0,0)';
 										selectedch.readOnly=true;
 										selectedch.value='Change';
-										
+
 
 										groupchoice.onclick=function(ifdiv,jcurrcount){
 											return function(){
@@ -687,7 +691,7 @@ html
 														}
 													}
 
-								
+
 												}
 
 
@@ -706,9 +710,9 @@ html
 										gdiv.style.margin='10% 0';
 										prvval=umade[0].childNodes[0].value;
 
-										
+
 										console.log(2);
-										
+
 									}
 								}else{
 									if(ccount==0){
@@ -721,7 +725,7 @@ html
 										gdiv.appendChild(grouppanel);
 
 
-							
+
 
 									}
 									gdiv.appendChild(udiv[0]);
@@ -731,13 +735,13 @@ html
 
 									console.log(3);
 								}
-								
+
 
 								ccount+=1;
 								if(ccount>1000){
 									break;
 								}
-								
+
 							}//while ended	
 
 
@@ -780,13 +784,13 @@ html
 					sdiv.style.color='red';
 				}
 				markingnumlistdiv.appendChild(sdiv);
-		
+
 			}
 			markingnumdiv.appendChild(markingnumlistdiv);
 		}
 
 		function applyTheMiddle(option,t,inst){
-
+			console.log(tagmadae);
 			var bgdiv=document.createElement('div');
 			bgdiv.id='bgdiv';
 			document.getElementsByTagName('body')[0].appendChild(bgdiv);
@@ -848,7 +852,7 @@ html
 					sdiv.onclick=function(i){
 						return function(){
 
-						
+
 							var numidlist=''
 							selectlist.forEach(function(ia,it){
 							//for(let ia of selectlist){
@@ -867,7 +871,7 @@ html
 								var optionbox=document.createElement('div');
 								optionbox.className='optionbox';
 								optionbox.style.width='40%';
-								
+
 
 
 								var chbox1=document.createElement('input');
@@ -875,7 +879,7 @@ html
 								chbox1.name='boutgoingselect';	
 								chbox1.value='ss';
 								chbox1.className='chbox1';
-								
+
 								chbox1.onclick=function(ifdiv,jcurrcount){
 									return function(){
 
@@ -1055,7 +1059,7 @@ html
 									}else{
 										var gdiv=document.createElement('div');
 										gdiv.className='grouping';
-										
+
 										var grouppanel=document.createElement('div');
 										grouppanel.className='grouppanel';	
 										grouppanel.style.backgroundColor='#33FFEC';
@@ -1065,7 +1069,7 @@ html
 										var groupchoice=document.createElement('div');
 										groupchoice.className='groupchoice';
 										groupchoice.innerHTML='선택'
-									
+
 										grouppanel.appendChild(groupchoice);
 
 
@@ -1075,7 +1079,7 @@ html
 										selectedch.style.backgroundColor='rgba(0,0,0,0)';
 										selectedch.readOnly=true;
 										selectedch.value='Change';
-										
+
 
 										groupchoice.onclick=function(ifdiv,jcurrcount){
 											return function(){
@@ -1161,7 +1165,7 @@ html
 														}
 													}
 
-								
+
 												}
 
 
@@ -1180,9 +1184,9 @@ html
 										gdiv.style.margin='10% 0';
 										prvval=umade[0].childNodes[0].value;
 
-										
+
 										console.log(2);
-										
+
 									}
 								}else{
 									if(ccount==0){
@@ -1195,7 +1199,7 @@ html
 										gdiv.appendChild(grouppanel);
 
 
-							
+
 
 									}
 									gdiv.appendChild(udiv[0]);
@@ -1205,13 +1209,13 @@ html
 
 									console.log(3);
 								}
-								
+
 
 								ccount+=1;
 								if(ccount>1000){
 									break;
 								}
-								
+
 							}
 
 
@@ -1261,7 +1265,7 @@ html
 				}
 
 				markingnumlistdiv.appendChild(sdiv);
-				
+
 			}
 			markingnumdiv.appendChild(markingnumlistdiv);
 		}
@@ -1298,7 +1302,7 @@ html
 			finput.type='text';
 			finput.value=detailcontent;
 			finput.id=numid+item+'text';
-			
+
 			var fbutton=document.createElement('button');
 			fbutton.innerHTML='click';
 			fbutton.onclick=function(i,j){
@@ -1473,8 +1477,9 @@ html
 			}
 
 		});
+
 		qprbsocket.on('statuseditafter',function(a){
-	
+
 			if(a.b.option=='text'){
 
 				var sdiv=document.getElementById('status'+a.b.numid+'text');
@@ -1515,4 +1520,5 @@ html
 
 
 		});
+
 	script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous")

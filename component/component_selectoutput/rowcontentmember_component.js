@@ -1,6 +1,20 @@
 export class RowContentMember {
     constructor(){
         
+		$(function (){
+            $(".datecon").datepicker({
+                onSelect:function(t,inst){
+                    //applyTheSameEnd(t,inst);
+                    applyTheMiddle('each',t,inst);
+                }
+            });
+            });
+            $.datepicker.setDefaults({
+            dateFormat:'ymmdd'
+            //dateFormat:'yy-mm-dd'
+            });
+    
+        
     }
     static run({receiveddom,targetdom}){
         targetdom.appendChild(receiveddom);
@@ -15,7 +29,8 @@ export class RowContentMember {
     }
 
     static madenumcontent({usedata,forcount,datacount,orderlist,targetdom,receiveddom}){
-        console.log(datacount);
+    
+
         receiveddom.id=usedata[forcount].numid+orderlist;
         receiveddom.setAttribute('data-item',orderlist);
         receiveddom.setAttribute('data-numid',usedata[forcount].numid);

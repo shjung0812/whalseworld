@@ -3,6 +3,7 @@ export class SelectOutputController {
     constructor(){
         this.selectoutputmodel=new SelectOutputModel();
     
+
     }
     getParcelCodeStatusDataController(){
         return this.selectoutputmodel.getParcelCodeStatusData();
@@ -27,6 +28,22 @@ export class SelectOutputController {
         return await this.selectoutputmodel.requestBackData();
     }
 
+    setDatePicker(){
+        $(function () {
+            $(".datecon").datepicker({
+                onSelect: function (t, inst) {
+                    //applyTheSameEnd(t,inst);
+                    applyTheMiddle('each', t, inst);
+                }
+            });
+        });
+        $.datepicker.setDefaults({
+            dateFormat: 'ymmdd'
+            //dateFormat:'yy-mm-dd'
+        });
+    }
+
     
 }
+
 
