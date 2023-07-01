@@ -324,11 +324,8 @@ app.get('/admin/functionlist',function(req,res){
 	res.render('hana/admin/whalseboard');
 });
 app.get('/admin/dbdisplaylist',function(req,res){
-
-		
-	res.render('hana/admin/dbdisplaylist',{a:a});
-
 	
+	res.render('hana/admin/dbdisplaylist');
 });
 
 
@@ -789,7 +786,7 @@ app.get('/whalse/pcwaitinglist',function(req,res){
 
 
 
-app.get('/admin/madaetagprocessingdisplay',function(req,res){
+app.get('/whalse/admin/madaetagprocessingdisplay',function(req,res){
 	sf.whalsegetinfodb('select * from madaetagprocessing',function(a){
 		
 		res.render('hana/admin/madaetagprocessingdisplay',{a:a});
@@ -797,7 +794,7 @@ app.get('/admin/madaetagprocessingdisplay',function(req,res){
 	
 });
 
-app.get('/admin/taglisttabledisplay',function(req,res){
+app.get('/whalse/admin/taglisttabledisplay',function(req,res){
 	sf.whalsegetinfodb('select * from taglisttable',function(a){
 		
 		res.render('hana/admin/taglisttabledisplay',{a:a});
