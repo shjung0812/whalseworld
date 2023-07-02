@@ -440,7 +440,7 @@ app.get('/whalse/tagattach/taginbetweenprocess',function(req,res){
 
 
 
-app.get('/whalse/tagattach/zsmadaerelease',function(req,res){
+app.get('/whalse/tagattach/madaecomplete',function(req,res){
 	var tagnumid=[4];
 
 	var wh='';
@@ -454,7 +454,7 @@ app.get('/whalse/tagattach/zsmadaerelease',function(req,res){
 
 	sf.whalsegetinfodb('select * from taglisttable where ' + wh, function(tag){
 	sf.whalsegetinfodb('select * from madaeitemconnect as m join initialdata as data on m.childcol=data.numid left join madaetagprocessing as p on m.madaename=p.parentcol where p.parentcol is null', function(a){
-		res.render('hana/tagattach/zsmadaerelease',{a:a,tag:tag});
+		res.render('hana/tagattach/madaecomplete',{a:a,tag:tag});
 	});
 	});
 });
