@@ -186,7 +186,7 @@ export class RowContentMember {
 
             if(usedata[forcount][orderlist]!=null){
 
-                if(receiveddom[forcount].statuscode==0){
+                if(usedata[forcount].statuscode==0){
                     arrsub0div.innerHTML=usedata[forcount].order_quantity;
                     arrsub0div.onclick=function(i){
                         return function(){
@@ -196,7 +196,7 @@ export class RowContentMember {
 
 
                 }else{
-                    arrsub0div.innerHTML=a.data[ia][v];
+                    arrsub0div.innerHTML=usedata[forcount][orderlist];
                     arrsub0div.onclick=function(i){
                         return function(){
                             NumContainer(30,20,20,i,findCurrentScode(i))
