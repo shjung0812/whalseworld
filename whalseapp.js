@@ -453,10 +453,18 @@ app.get('/whalse/tagattach/madaecomplete',function(req,res){
 	}
 
 	sf.whalsegetinfodb('select * from taglisttable where ' + wh, function(tag){
-	sf.whalsegetinfodb('select * from madaeitemconnect as m join initialdata as data on m.childcol=data.numid left join madaetagprocessing as p on m.madaename=p.parentcol where p.parentcol is null', function(a){
-		res.render('hana/tagattach/madaecomplete',{a:a,tag:tag});
+	sf.whalsegetinfodb('select * from madaeitemconnect as m join initialdata as data on m.childcol=data.numid left join madaetagprocessing as p on m.madaename=p.parentcol join processinglist as pr on data.parcel_code COLLATE utf8mb4_0900_ai_ci =pr.parcelcodelist COLLATE utf8mb4_0900_ai_ci where p.parentcol is null and pr.markingstatus!="markingprogressing"', function(a){
+	 	res.render('hana/tagattach/madaecomplete',{a:a,tag:tag});
 	});
 	});
+
+
+	/*
+	sf.whalsegetinfodb('select * from taglisttable where ' + wh, function(tag){
+		sf.whalsegetinfodb('select * from madaeitemconnect as m join initialdata as data on m.childcol=data.numid left join madaetagprocessing as p on m.madaename=p.parentcol where p.parentcol is null', function(a){
+			res.render('hana/tagattach/madaecomplete',{a:a,tag:tag});
+		});
+	});*/
 });
 
 
