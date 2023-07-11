@@ -95,8 +95,6 @@ class SelectOutputComponent {
             }
             sdata.appendChild(backdataContentContainer);
             sameparcelcodecount += 1;
-
-
         }
 
         for (var is = 0; is < receivedparcelcode.length; is++) {  //Start:for(var is=0; is<tooutput.length; is++){
